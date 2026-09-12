@@ -1,45 +1,34 @@
 {
-  "pages": [
-    "pages/index/index",
-    "pages/skills/skills",
-    "pages/gallery/gallery",
-    "pages/trial/trial"
-  ],
+  "pages": ["pages/play/play", "pages/collection/collection", "pages/profile/profile"],
   "window": {
-    "navigationBarTitleText": "CyberSmoke 赛博吸烟",
-    "navigationBarBackgroundColor": "#0a0a12",
+    "navigationBarTitleText": "CyberSmoke",
+    "navigationBarBackgroundColor": "#090A0C",
     "navigationBarTextStyle": "white",
-    "backgroundColor": "#0a0a12"
+    "backgroundColor": "#090A0C"
   },
   "tabBar": {
-    "color": "#8a8aa0",
-    "selectedColor": "#00ffd5",
-    "backgroundColor": "#0a0a12",
+    "color": "#5C6468",
+    "selectedColor": "#75F4D2",
+    "backgroundColor": "#090A0C",
     "borderStyle": "black",
     "list": [
       {
-        "pagePath": "pages/index/index",
-        "text": "抽烟",
-        "iconPath": "assets/icon/tab-smoke.png",
-        "selectedIconPath": "assets/icon/tab-smoke-active.png"
+        "pagePath": "pages/play/play",
+        "text": "玩",
+        "iconPath": "assets/icon/play.png",
+        "selectedIconPath": "assets/icon/play-active.png"
       },
       {
-        "pagePath": "pages/skills/skills",
-        "text": "技能",
-        "iconPath": "assets/icon/tab-skills.png",
-        "selectedIconPath": "assets/icon/tab-skills-active.png"
+        "pagePath": "pages/collection/collection",
+        "text": "收藏",
+        "iconPath": "assets/icon/collection.png",
+        "selectedIconPath": "assets/icon/collection-active.png"
       },
       {
-        "pagePath": "pages/gallery/gallery",
-        "text": "图鉴",
-        "iconPath": "assets/icon/tab-gallery.png",
-        "selectedIconPath": "assets/icon/tab-gallery-active.png"
-      },
-      {
-        "pagePath": "pages/trial/trial",
-        "text": "试炼",
-        "iconPath": "assets/icon/tab-trial.png",
-        "selectedIconPath": "assets/icon/tab-trial-active.png"
+        "pagePath": "pages/profile/profile",
+        "text": "我的",
+        "iconPath": "assets/icon/profile.png",
+        "selectedIconPath": "assets/icon/profile-active.png"
       }
     ]
   },

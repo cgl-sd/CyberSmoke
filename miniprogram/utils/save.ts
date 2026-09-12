@@ -1,95 +1,132 @@
-// utils/save.ts —— 本地存档读写（v2：含焦油/烟蒂/烟灰炉/晨烟/戒烟挑战/声音设置）
-import { BurnSlot } from '../data/game';
+// utils/save.ts —— 玩家存档 v3（规格 §35 Player 结构）
+// 本版本为「烟圈挑战」重做版：旧版存档不兼容，按新档处理（保留音效开关）
+import { DailyTask, genDaily } from '../data/daily';
 
-const SAVE_KEY = 'cybersmoke_save';
+const SAVE_KEY = 'cybersmoke_player_v3';
 
-export interface SaveData {
+export interface LevelProgress {
+  stars: number;
+  bestScore: number;
+}
+
+export interface CollectEntry {
+  count: number;
+  best: number;
+}
+
+export interface PlayerSave {
   version: number;
-  nicotine: number;
-  cigaretteCount: number;
-  ownedCigarettes: string[];
-  currentCigarette: string;
-  /** 焦油（负资源） */
-  tar: number;
-  /** 烟蒂（抽奖材料） */
-  butts: number;
-  /** 烟灰炉燃烧槽（最近 N 支） */
-  burnSlots: BurnSlot[];
-  /** 最近一次抽烟的本地日期 */
-  lastSmokeDay: string;
-  /** 晨烟连击天数 */
-  streakDays: number;
-  /** 戒烟挑战进行中 */
-  quitActive: boolean;
-  /** 挑战开始日期 */
-  quitStartDay: string;
-  /** 已达成「清醒者」 */
-  soberAchieved: boolean;
-  /** 音效开关 */
+  level: number;
+  xp: number;
+  currency: number;
+
+  totalGames: number;
+  totalRings: number;
+  perfectCount: number;
+
+  bestScore: number;
+  bestCombo: number;
+  bestEndlessRound: number;
+  bestEndlessScore: number;
+
+  completedLevels: Record<string, LevelProgress>;
+  achievements: string[];
+  collections: Record<string, CollectEntry>;
+
+  daily: { date: string; tasks: DailyTask[] };
+
+  /** 上次游玩的关卡 id */
+  lastLevelId: string;
+  /** 上次模式：level / endless / free */
+  lastModeType: 'level' | 'endless';
+
   soundOn: boolean;
-  /** 最高晨烟连击 */
-  maxStreak: number;
-  /** 累计合成抽奖次数 */
-  gachaCount: number;
-  /** 累计收烟灰（烟灰单位） */
-  ashCollected: number;
-  /** 已完成的试炼关卡 id */
-  trialDone: string[];
 }
 
 const num = (v: unknown, dflt: number): number =>
   typeof v === 'number' && Number.isFinite(v) && v >= 0 ? v : dflt;
 
-const strList = (v: unknown): string[] =>
-  Array.isArray(v) ? v.filter((s) => typeof s === 'string') : [];
-
-function sanitizeSlots(raw: unknown): BurnSlot[] {
-  if (!Array.isArray(raw)) return [];
-  return raw
-    .filter((s: any) => s && typeof s.t === 'number')
-    .map((s: any) => ({ t: s.t as number, c: typeof s.c === 'number' ? s.c : 0 }));
+export function defaultPlayer(today: string): PlayerSave {
+  return {
+    version: 3,
+    level: 1,
+    xp: 0,
+    currency: 0,
+    totalGames: 0,
+    totalRings: 0,
+    perfectCount: 0,
+    bestScore: 0,
+    bestCombo: 0,
+    bestEndlessRound: 0,
+    bestEndlessScore: 0,
+    completedLevels: {},
+    achievements: [],
+    collections: {},
+    daily: { date: today, tasks: genDaily(today) },
+    lastLevelId: '1-01',
+    lastModeType: 'level',
+    soundOn: true,
+  };
 }
 
-/** 读取存档，无档或损坏时返回 null（按新档处理）；旧版本存档自动补默认值 */
-export function loadSave(): SaveData | null {
+function sanitizeDaily(raw: any, today: string): PlayerSave['daily'] {
+  if (
+    raw &&
+    typeof raw.date === 'string' &&
+    Array.isArray(raw.tasks) &&
+    raw.tasks.length === 3 &&
+    raw.tasks.every((t: any) => t && typeof t.id === 'string' && typeof t.target === 'number')
+  ) {
+    return { date: raw.date, tasks: raw.tasks };
+  }
+  return { date: today, tasks: genDaily(today) };
+}
+
+/** 读取存档；无档/旧档/损坏档一律按新档处理 */
+export function loadPlayer(today: string): PlayerSave {
   try {
-    const raw = wx.getStorageSync<Partial<SaveData>>(SAVE_KEY);
-    if (raw && typeof raw.cigaretteCount === 'number') {
+    const raw = wx.getStorageSync<any>(SAVE_KEY);
+    if (raw && raw.version === 3 && typeof raw.level === 'number') {
       return {
-        version: 2,
-        nicotine: num(raw.nicotine, 0),
-        cigaretteCount: num(raw.cigaretteCount, 0),
-        ownedCigarettes:
-          Array.isArray(raw.ownedCigarettes) && raw.ownedCigarettes.length
-            ? raw.ownedCigarettes
-            : ['slim'],
-        currentCigarette: typeof raw.currentCigarette === 'string' ? raw.currentCigarette : 'slim',
-        tar: num(raw.tar, 0),
-        butts: num(raw.butts, 0),
-        burnSlots: sanitizeSlots(raw.burnSlots),
-        lastSmokeDay: typeof raw.lastSmokeDay === 'string' ? raw.lastSmokeDay : '',
-        streakDays: num(raw.streakDays, 0),
-        quitActive: raw.quitActive === true,
-        quitStartDay: typeof raw.quitStartDay === 'string' ? raw.quitStartDay : '',
-        soberAchieved: raw.soberAchieved === true,
+        version: 3,
+        level: num(raw.level, 1),
+        xp: num(raw.xp, 0),
+        currency: num(raw.currency, 0),
+        totalGames: num(raw.totalGames, 0),
+        totalRings: num(raw.totalRings, 0),
+        perfectCount: num(raw.perfectCount, 0),
+        bestScore: num(raw.bestScore, 0),
+        bestCombo: num(raw.bestCombo, 0),
+        bestEndlessRound: num(raw.bestEndlessRound, 0),
+        bestEndlessScore: num(raw.bestEndlessScore, 0),
+        completedLevels:
+          raw.completedLevels && typeof raw.completedLevels === 'object' ? raw.completedLevels : {},
+        achievements: Array.isArray(raw.achievements) ? raw.achievements : [],
+        collections:
+          raw.collections && typeof raw.collections === 'object' ? raw.collections : {},
+        daily: sanitizeDaily(raw.daily, today),
+        lastLevelId: typeof raw.lastLevelId === 'string' ? raw.lastLevelId : '1-01',
+        lastModeType: raw.lastModeType === 'endless' ? 'endless' : 'level',
         soundOn: raw.soundOn !== false,
-        maxStreak: num(raw.maxStreak, 0),
-        gachaCount: num(raw.gachaCount, 0),
-        ashCollected: num(raw.ashCollected, 0),
-        trialDone: strList(raw.trialDone),
       };
     }
   } catch (e) {
-    // 存档损坏时按新档处理
+    // 损坏档按新档处理
   }
-  return null;
+  return defaultPlayer(today);
 }
 
-/** 写入存档（version 由这里统一封装，静默失败不打断玩法） */
-export function persist(data: Omit<SaveData, 'version'>): void {
+export function persistPlayer(player: PlayerSave): void {
   try {
-    wx.setStorageSync(SAVE_KEY, { ...data, version: 2 } as SaveData);
+    wx.setStorageSync(SAVE_KEY, player);
   } catch (e) {
-    // 忽略写入失败
+    // 写入失败静默
   }
+}
+
+/** 本地日期 YYYY-MM-DD */
+export function todayStr(d = new Date()): string {
+  const m = `${d.getMonth() + 1}`.padStart(2, '0');
+  const day = `${d.getDate()}`.padStart(2, '0');
+  return `${d.getFullYear()}-${m}-${day}`;
 }

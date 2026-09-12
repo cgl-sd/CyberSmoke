@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "CyberSmoke",
+  "navigationBarBackgroundColor": "#090A0C",
+  "navigationBarTextStyle": "white",
+  "backgroundColor": "#090A0C",
+  "disableScroll": true,
+  "usingComponents": {}
+}

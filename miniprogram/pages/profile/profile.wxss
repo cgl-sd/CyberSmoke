@@ -1,0 +1,164 @@
+/* 我的页样式 */
+.page {
+  min-height: 100vh;
+  padding: 40rpx 32rpx 80rpx;
+  box-sizing: border-box;
+  background: #090a0c;
+}
+
+.card {
+  background: rgba(232, 238, 238, 0.03);
+  border: 1rpx solid rgba(232, 238, 238, 0.08);
+  border-radius: 20rpx;
+  padding: 30rpx;
+  margin-bottom: 26rpx;
+}
+
+.card-title {
+  font-size: 28rpx;
+  color: #e8eeee;
+  letter-spacing: 6rpx;
+}
+
+.date,
+.done-count {
+  font-size: 20rpx;
+  color: #5c6468;
+  margin-left: 12rpx;
+}
+
+.lv-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.lv {
+  font-size: 56rpx;
+  color: #75f4d2;
+  font-weight: 700;
+}
+
+.currency {
+  font-size: 26rpx;
+  color: #e8eeee;
+}
+
+.xp-bar {
+  margin-top: 20rpx;
+  height: 12rpx;
+  background: rgba(232, 238, 238, 0.08);
+  border-radius: 6rpx;
+  overflow: hidden;
+}
+
+.xp-fill {
+  height: 100%;
+  background: #75f4d2;
+  border-radius: 6rpx;
+}
+
+.xp-text {
+  margin-top: 12rpx;
+  font-size: 20rpx;
+  color: #5c6468;
+  letter-spacing: 2rpx;
+}
+
+.daily-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20rpx;
+}
+
+.daily-desc {
+  font-size: 26rpx;
+  color: #e8eeee;
+}
+
+.daily-desc.done {
+  color: #75f4d2;
+}
+
+.daily-meta {
+  font-size: 20rpx;
+  color: #9aa5a9;
+}
+
+.stat-grid {
+  margin-top: 24rpx;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  width: 33%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.stat-num {
+  font-size: 40rpx;
+  color: #e8eeee;
+  font-weight: 700;
+}
+
+.stat-label {
+  margin-top: 6rpx;
+  font-size: 20rpx;
+  color: #5c6468;
+}
+
+.ach-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20rpx;
+  opacity: 0.45;
+}
+
+.ach-row.ach-done {
+  opacity: 1;
+}
+
+.ach-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.ach-name {
+  font-size: 26rpx;
+  color: #e8eeee;
+}
+
+.ach-desc {
+  margin-top: 4rpx;
+  font-size: 20rpx;
+  color: #5c6468;
+}
+
+.ach-check {
+  font-size: 30rpx;
+  color: #75f4d2;
+}
+
+.setting-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 26rpx;
+  color: #e8eeee;
+}
+
+.sound {
+  color: #75f4d2;
+}
+
+.about {
+  margin-top: 24rpx;
+  font-size: 20rpx;
+  color: #5c6468;
+  line-height: 1.8;
+}

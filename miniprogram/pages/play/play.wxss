@@ -1,0 +1,537 @@
+/* 玩页样式 —— 视觉 Reference：黑底 #090A0C + 白烟 + 薄荷青 #75F4D2，大面积留白 */
+.page {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #090a0c;
+}
+
+.fx {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+}
+
+/* 顶部 */
+.top {
+  position: relative;
+  z-index: 2;
+  padding: 32rpx 36rpx 0;
+}
+
+.brand-row {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand {
+  font-size: 40rpx;
+  color: #e8eeee;
+  letter-spacing: 4rpx;
+  font-weight: 300;
+}
+
+.disclaimer {
+  margin-top: 6rpx;
+  font-size: 20rpx;
+  color: #5c6468;
+  letter-spacing: 4rpx;
+}
+
+.mode-row {
+  margin-top: 20rpx;
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.mode-chip {
+  font-size: 22rpx;
+  color: #75f4d2;
+  border: 1rpx solid rgba(117, 244, 210, 0.4);
+  border-radius: 22rpx;
+  padding: 6rpx 22rpx;
+}
+
+.hearts {
+  display: flex;
+  gap: 6rpx;
+}
+
+.heart {
+  color: #33383b;
+  font-size: 26rpx;
+}
+
+.heart.on {
+  color: #ff6767;
+}
+
+.goal-line {
+  margin-top: 16rpx;
+  font-size: 24rpx;
+  color: #9aa5a9;
+  letter-spacing: 2rpx;
+}
+
+/* 舞台 */
+.stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2;
+}
+
+/* 真实香烟形态：烟头火星 + 灰烬 + 白色烟纸 + 滤嘴 */
+.cig {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-14deg);
+  display: flex;
+  align-items: center;
+  width: 300rpx;
+  height: 30rpx;
+  filter: drop-shadow(0 0 20rpx rgba(232, 238, 238, 0.12));
+}
+
+.ember {
+  width: 20rpx;
+  height: 20rpx;
+  border-radius: 50%;
+  background: #ff6767;
+  box-shadow: 0 0 10rpx rgba(255, 103, 103, 0.8);
+  opacity: 0.5;
+}
+
+.cig-lit .ember {
+  opacity: 1;
+  box-shadow: 0 0 22rpx rgba(255, 103, 103, 1);
+  animation: ember-pulse 1.1s ease-in-out infinite;
+}
+
+@keyframes ember-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 10rpx rgba(255, 103, 103, 0.8);
+  }
+  50% {
+    box-shadow: 0 0 26rpx rgba(255, 103, 103, 1);
+  }
+}
+
+.ash {
+  width: 16rpx;
+  height: 22rpx;
+  background: linear-gradient(90deg, #6b7075, #43484c);
+}
+
+.paper {
+  flex: 1;
+  height: 26rpx;
+  background: linear-gradient(180deg, #f4f7f7, #c3cbcb);
+  border-radius: 4rpx;
+}
+
+.filter {
+  width: 92rpx;
+  height: 26rpx;
+  background: linear-gradient(180deg, #4a5054, #33383b);
+  border-radius: 0 8rpx 8rpx 4rpx;
+  border-left: 4rpx solid #b79468;
+}
+
+.cig-flame {
+  position: absolute;
+  top: -36rpx;
+  left: -6rpx;
+  width: 26rpx;
+  height: 34rpx;
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  background: radial-gradient(circle at 50% 70%, #ffd8a8, #ff9f6b 65%, transparent);
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+
+.flame-on {
+  opacity: 1;
+  animation: flame-flicker 0.3s ease-in-out infinite alternate;
+}
+
+@keyframes flame-flicker {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.25, 1.1);
+  }
+}
+
+/* 阶段 UI */
+.ready-ui,
+.inhale-ui,
+.release-ui,
+.draw-ui,
+.calc-ui {
+  position: absolute;
+  left: 0;
+  width: 100vw;
+  top: 56%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hint-main {
+  font-size: 44rpx;
+  color: #e8eeee;
+  letter-spacing: 12rpx;
+  font-weight: 300;
+}
+
+.sub-hint {
+  margin-top: 16rpx;
+  font-size: 22rpx;
+  color: #5c6468;
+  letter-spacing: 6rpx;
+}
+
+.ignite-btn {
+  width: 240rpx;
+  height: 96rpx;
+  line-height: 96rpx;
+  border-radius: 48rpx;
+  background: transparent;
+  color: #75f4d2;
+  font-size: 32rpx;
+  letter-spacing: 12rpx;
+  border: 2rpx solid rgba(117, 244, 210, 0.7);
+  box-shadow: 0 0 30rpx rgba(117, 244, 210, 0.25);
+  padding: 0;
+  margin-bottom: 36rpx;
+}
+
+.ignite-btn::after {
+  border: none;
+}
+
+/* 蓄力条：Perfect 区间可视化（规格 AC-004） */
+.charge-bar {
+  position: relative;
+  margin-top: 28rpx;
+  width: 420rpx;
+  height: 12rpx;
+  background: rgba(232, 238, 238, 0.1);
+  border-radius: 6rpx;
+  overflow: hidden;
+}
+
+.perfect-band {
+  position: absolute;
+  left: 45%;
+  width: 27%;
+  height: 100%;
+  background: rgba(117, 244, 210, 0.25);
+}
+
+.charge-fill {
+  height: 100%;
+  background: #e8eeee;
+  border-radius: 6rpx;
+}
+
+.charge-fill.perfect {
+  background: #75f4d2;
+  box-shadow: 0 0 16rpx rgba(117, 244, 210, 0.9);
+}
+
+.charge-num {
+  margin-top: 14rpx;
+  font-size: 26rpx;
+  color: #9aa5a9;
+  letter-spacing: 4rpx;
+}
+
+.charge-num + .sub-hint {
+  margin-top: 8rpx;
+}
+
+/* 画圈倒计时 */
+.time-bar {
+  margin-top: 24rpx;
+  width: 420rpx;
+  height: 8rpx;
+  background: rgba(232, 238, 238, 0.1);
+  border-radius: 4rpx;
+  overflow: hidden;
+}
+
+.time-fill {
+  height: 100%;
+  background: #75f4d2;
+}
+
+.calc-ui .hint-main {
+  letter-spacing: 8rpx;
+}
+
+/* 结算浮层 */
+.overlay {
+  position: fixed;
+  z-index: 3;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(9, 10, 12, 0.82);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.rank {
+  font-size: 96rpx;
+  font-weight: 700;
+  letter-spacing: 8rpx;
+}
+
+.rank-low {
+  color: #7d868b;
+}
+
+.rank-high {
+  color: #75f4d2;
+  text-shadow: 0 0 40rpx rgba(117, 244, 210, 0.6);
+}
+
+.rank-perfect {
+  color: #b794f6;
+  text-shadow: 0 0 46rpx rgba(183, 148, 246, 0.8);
+}
+
+.rank-legend {
+  color: #e8eeee;
+  text-shadow: 0 0 30rpx rgba(117, 244, 210, 0.9), 0 0 70rpx rgba(183, 148, 246, 0.6);
+}
+
+.ring-dot {
+  margin: 18rpx 0;
+  width: 22rpx;
+  height: 22rpx;
+  border: 3rpx solid rgba(232, 238, 238, 0.7);
+  border-radius: 50%;
+}
+
+.score {
+  font-size: 60rpx;
+  color: #e8eeee;
+  font-weight: 300;
+  letter-spacing: 4rpx;
+}
+
+.combo {
+  margin-top: 10rpx;
+  font-size: 28rpx;
+  color: #75f4d2;
+  letter-spacing: 6rpx;
+}
+
+.stars {
+  margin-top: 14rpx;
+  font-size: 40rpx;
+}
+
+.stars .on {
+  color: #ffd166;
+  letter-spacing: 8rpx;
+}
+
+.stars .off {
+  color: #5c6468;
+  font-size: 28rpx;
+  letter-spacing: 6rpx;
+}
+
+.reward-line {
+  margin-top: 22rpx;
+  font-size: 26rpx;
+  color: #9aa5a9;
+  letter-spacing: 3rpx;
+}
+
+.msg-line {
+  margin-top: 10rpx;
+  font-size: 22rpx;
+  color: #75f4d2;
+  max-width: 80vw;
+  text-align: center;
+}
+
+.msg-line.unlock {
+  color: #b794f6;
+}
+
+.msg-line.record {
+  color: #ffd166;
+}
+
+.btn-row {
+  margin-top: 44rpx;
+  display: flex;
+  gap: 28rpx;
+}
+
+.btn {
+  min-width: 240rpx;
+  height: 88rpx;
+  line-height: 88rpx;
+  border-radius: 44rpx;
+  font-size: 28rpx;
+  letter-spacing: 6rpx;
+  padding: 0 36rpx;
+  margin: 0;
+}
+
+.btn::after {
+  border: none;
+}
+
+.btn.primary {
+  background: #75f4d2;
+  color: #090a0c;
+  font-weight: 700;
+}
+
+.btn.ghost {
+  background: transparent;
+  color: #e8eeee;
+  border: 2rpx solid rgba(232, 238, 238, 0.4);
+}
+
+.details-toggle {
+  margin-top: 30rpx;
+  font-size: 22rpx;
+  color: #5c6468;
+  letter-spacing: 4rpx;
+}
+
+.details {
+  margin-top: 20rpx;
+  width: 460rpx;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8rpx 4rpx;
+  font-size: 24rpx;
+  color: #9aa5a9;
+}
+
+.detail-row .pass {
+  color: #75f4d2;
+}
+
+.detail-row .fail {
+  color: #ff6767;
+}
+
+/* 关卡选择抽屉 */
+.sheet-mask {
+  position: fixed;
+  z-index: 4;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.sheet {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  max-height: 72vh;
+  background: #101315;
+  border-radius: 32rpx 32rpx 0 0;
+  padding: 36rpx 32rpx calc(40rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+
+.sheet-title {
+  font-size: 30rpx;
+  color: #e8eeee;
+  letter-spacing: 6rpx;
+  text-align: center;
+}
+
+.endless-entry {
+  margin-top: 28rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1rpx solid rgba(183, 148, 246, 0.5);
+  border-radius: 16rpx;
+  padding: 22rpx 26rpx;
+  color: #b794f6;
+  font-size: 28rpx;
+}
+
+.endless-entry.locked {
+  opacity: 0.4;
+}
+
+.entry-note {
+  font-size: 20rpx;
+  color: #5c6468;
+}
+
+.level-scroll {
+  margin-top: 24rpx;
+  max-height: 46vh;
+}
+
+.level-row {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 22rpx 12rpx;
+  border-bottom: 1rpx solid rgba(232, 238, 238, 0.06);
+  color: #e8eeee;
+}
+
+.level-row.locked {
+  opacity: 0.35;
+}
+
+.level-row.current .lv-id {
+  color: #75f4d2;
+}
+
+.lv-id {
+  width: 90rpx;
+  font-size: 24rpx;
+  color: #9aa5a9;
+}
+
+.lv-name {
+  flex: 1;
+  font-size: 28rpx;
+}
+
+.lv-stars {
+  font-size: 22rpx;
+  color: #ffd166;
+}
+
+.lv-lock {
+  font-size: 24rpx;
+}

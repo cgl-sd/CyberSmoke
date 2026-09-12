@@ -83,7 +83,7 @@ function lowpass(samples, k) {
   writeFileSync(join(outDir, 'exhale.wav'), wav(s))
 }
 
-// 4. 奖励：三音上行琶音（赛博小调）
+// 4. 得分：三音上行琶音
 {
   const notes = [659.25, 783.99, 1046.5]
   const n = sec(0.55)
@@ -98,25 +98,25 @@ function lowpass(samples, k) {
         (Math.sin(2 * Math.PI * f * t) * 0.5 + Math.sin(2 * Math.PI * f * 2 * t) * 0.18) * env * 0.6
     }
   })
-  writeFileSync(join(outDir, 'reward.wav'), wav(s))
+  writeFileSync(join(outDir, 'score.wav'), wav(s))
 }
 
-// 5. 咳嗽：两声闷响
+// 5. PERFECT：更亮的四音琶音（高八度闪烁感）
 {
-  const n = sec(0.4)
-  const raw = Array.from({ length: n }, () => noise())
-  const lp = lowpass(raw, 0.3)
+  const notes = [783.99, 987.77, 1318.5, 1760]
+  const n = sec(0.62)
   const s = new Array(n).fill(0)
-  const burst = (at, len, amp) => {
-    for (let i = 0; i < len; i++) {
-      const t = i / len
-      const env = Math.sin(Math.PI * t)
-      s[at + i] += lp[at + i] * amp * env
+  notes.forEach((f, idx) => {
+    const start = sec(idx * 0.09)
+    const len = sec(0.26)
+    for (let i = 0; i < len && start + i < n; i++) {
+      const t = i / RATE
+      const env = Math.exp(-5 * t)
+      s[start + i] +=
+        (Math.sin(2 * Math.PI * f * t) * 0.45 + Math.sin(2 * Math.PI * f * 3 * t) * 0.12) * env * 0.55
     }
-  }
-  burst(sec(0.02), sec(0.09), 0.9)
-  burst(sec(0.2), sec(0.11), 1.0)
-  writeFileSync(join(outDir, 'cough.wav'), wav(s))
+  })
+  writeFileSync(join(outDir, 'perfect.wav'), wav(s))
 }
 
 console.log('✅ 音效已生成到', outDir)

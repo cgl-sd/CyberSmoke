@@ -1,0 +1,143 @@
+<view class="page">
+  <canvas type="2d" id="fx" class="fx"></canvas>
+
+  <!-- 顶部：品牌 + 模式（信息密度符合 AC-024） -->
+  <view class="top">
+    <view class="brand-row">
+      <text class="brand">CyberSmoke</text>
+      <text class="disclaimer">纯属虚拟 · 不提倡吸烟</text>
+    </view>
+    <view class="mode-row">
+      <view class="mode-chip" catchtap="openSheet">{{modeChip}}</view>
+      <view class="hearts" wx:if="{{modeType === 'endless'}}">
+        <text wx:for="{{[0,1,2]}}" wx:key="*this" class="heart {{index < hearts ? 'on' : ''}}">♥</text>
+      </view>
+    </view>
+    <view class="goal-line">{{goalDesc}}</view>
+  </view>
+
+  <!-- 舞台：香烟 + 全阶段触摸 -->
+  <view
+    class="stage"
+    bindtouchstart="onTouchStart"
+    bindtouchmove="onTouchMove"
+    bindtouchend="onTouchEnd"
+    bindtouchcancel="onTouchCancel"
+  >
+    <view class="cig {{phase === 'igniting' || phase === 'inhale' ? 'cig-lit' : ''}}">
+      <view class="cig-flame {{phase === 'igniting' ? 'flame-on' : ''}}"></view>
+      <view class="ember"></view>
+      <view class="ash"></view>
+      <view class="paper"></view>
+      <view class="filter"></view>
+    </view>
+
+    <!-- READY -->
+    <view class="ready-ui" wx:if="{{phase === 'ready'}}">
+      <button class="ignite-btn" catchtap="onIgniteTap">点 火</button>
+      <view class="sub-hint">按住吸入 · 松手吐雾 · 画圈得分</view>
+    </view>
+
+    <!-- INHALE -->
+    <view class="inhale-ui" wx:if="{{phase === 'inhale'}}">
+      <view class="hint-main">按住吸入</view>
+      <view class="charge-bar">
+        <view class="perfect-band"></view>
+        <view class="charge-fill {{inPerfect ? 'perfect' : ''}}" style="width: {{chargePercent}}%"></view>
+      </view>
+      <view class="charge-num">{{chargePercent}}%</view>
+      <view class="sub-hint">松手 · 吐出烟雾</view>
+    </view>
+
+    <!-- RELEASE -->
+    <view class="release-ui" wx:if="{{phase === 'release'}}">
+      <view class="hint-main">吐雾…</view>
+    </view>
+
+    <!-- DRAW -->
+    <view class="draw-ui" wx:if="{{phase === 'drawing'}}">
+      <view class="hint-main">画一个圈</view>
+      <view class="time-bar">
+        <view class="time-fill" style="width: {{drawTimePercent}}%"></view>
+      </view>
+      <view class="sub-hint">手指画圈 · 越圆越大越好</view>
+    </view>
+
+    <!-- CALCULATING -->
+    <view class="calc-ui" wx:if="{{phase === 'calculating'}}">
+      <view class="hint-main">评分中…</view>
+    </view>
+  </view>
+
+  <!-- 结算 -->
+  <view class="overlay" wx:if="{{phase === 'result' && result}}">
+    <view class="rank {{result.rankClass}}">{{result.rank}}</view>
+    <view class="ring-dot"></view>
+    <view class="score">+{{result.score}}</view>
+    <view class="combo" wx:if="{{result.combo >= 2}}">COMBO ×{{result.combo}}</view>
+    <view class="stars" wx:if="{{modeType === 'level'}}">
+      <text class="{{result.stars > 0 ? 'on' : 'off'}}">{{result.stars > 0 ? result.starText : '未通过'}}</text>
+    </view>
+    <view class="reward-line">尼古丁 +{{result.currency}} · EXP +{{result.xp}}</view>
+    <view class="msg-line" wx:if="{{result.levelUps.length > 0}}">{{result.levelUps}}</view>
+    <view class="msg-line unlock" wx:if="{{result.firstUnlockNames.length > 0}}">新图鉴：{{result.firstUnlockNames}}</view>
+    <view class="msg-line record" wx:if="{{result.newRecords.length > 0}}">新纪录：{{result.newRecords}}</view>
+
+    <view class="btn-row">
+      <button class="btn ghost" catchtap="onAgain">
+        {{modeType === 'endless' ? (result.passed ? '下一轮' : (hearts > 0 ? '再试一轮' : '本局结算')) : '再来一次'}}
+      </button>
+      <button class="btn primary" wx:if="{{result.showNext}}" catchtap="onNext">下一关</button>
+    </view>
+    <view class="details-toggle" catchtap="toggleDetails">{{showDetails ? '收起详情' : '详情'}}</view>
+    <view class="details" wx:if="{{showDetails}}">
+      <view class="detail-row" wx:for="{{result.details}}" wx:key="label">
+        <text>{{item.label}}</text>
+        <text>{{item.value}}</text>
+      </view>
+      <view class="detail-row" wx:if="{{modeType === 'level'}}" wx:for="{{result.goalRows}}" wx:key="desc">
+        <text class="{{item.pass ? 'pass' : 'fail'}}">{{item.pass ? '✓' : '✗'}} {{item.desc}}</text>
+      </view>
+      <view class="detail-row" wx:if="{{modeType === 'endless'}}">
+        <text>本轮目标</text>
+        <text class="{{result.passed ? 'pass' : 'fail'}}">{{result.passed ? '✓ 达成' : '✗ 未达成'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 无限模式本局结算 -->
+  <view class="overlay" wx:if="{{endlessOver}}">
+    <view class="rank rank-high">ENDLESS</view>
+    <view class="score">{{endlessOver.score}}</view>
+    <view class="reward-line">止步 ROUND {{endlessOver.round}} · 最佳 ROUND {{endlessOver.bestRound}}</view>
+    <view class="btn-row">
+      <button class="btn primary" catchtap="onEndlessRestart">再来一局</button>
+      <button class="btn ghost" catchtap="openSheet">换个模式</button>
+    </view>
+  </view>
+
+  <!-- 关卡选择 -->
+  <view class="sheet-mask" wx:if="{{sheet}}" catchtap="closeSheet">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet-title">选择模式</view>
+      <view class="endless-entry {{endlessUnlocked ? '' : 'locked'}}" catchtap="onSheetEndless">
+        <text>∞ 无限吐雾</text>
+        <text class="entry-note">{{endlessUnlocked ? '持续挑战 · 3 颗心' : 'Lv.' + endlessUnlockLevel + ' 解锁'}}</text>
+      </view>
+      <scroll-view scroll-y class="level-scroll">
+        <view
+          class="level-row {{item.locked ? 'locked' : ''}} {{item.current ? 'current' : ''}}"
+          wx:for="{{sheetLevels}}"
+          wx:key="id"
+          data-id="{{item.id}}"
+          catchtap="onSheetLevel"
+        >
+          <text class="lv-id">{{item.id}}</text>
+          <text class="lv-name">{{item.name}}</text>
+          <text class="lv-stars">{{item.starText}}</text>
+          <text class="lv-lock" wx:if="{{item.locked}}">🔒</text>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+</view>

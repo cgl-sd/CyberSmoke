@@ -1,5 +1,5 @@
 // scripts/gen-icons.mjs —— 纯代码生成 tabBar 图标 PNG（81×81，2x 超采样抗锯齿）
-// 输出 miniprogram/assets/icon/tab-*.png（普通态灰紫 / 选中态霓虹青）
+// 烟圈挑战版三 tab：玩（圆环）/ 收藏（心形）/ 我的（人形）
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { deflateSync } from 'node:zlib'
 import { dirname, join } from 'node:path'
@@ -10,7 +10,7 @@ const outDir = join(root, 'miniprogram', 'assets', 'icon')
 mkdirSync(outDir, { recursive: true })
 
 const SIZE = 81
-const SS = 2 // 超采样倍数
+const SS = 2
 const S = SIZE * SS
 
 // ---------- 最小 PNG 编码器 ----------
@@ -44,11 +44,11 @@ function encodePNG(w, h, rgba) {
   const ihdr = Buffer.alloc(13)
   ihdr.writeUInt32BE(w, 0)
   ihdr.writeUInt32BE(h, 4)
-  ihdr[8] = 8 // bit depth
-  ihdr[9] = 6 // RGBA
+  ihdr[8] = 8
+  ihdr[9] = 6
   const raw = Buffer.alloc((w * 4 + 1) * h)
   for (let y = 0; y < h; y++) {
-    raw[y * (w * 4 + 1)] = 0 // filter none
+    raw[y * (w * 4 + 1)] = 0
     rgba.copy(raw, y * (w * 4 + 1) + 1, y * w * 4, (y + 1) * w * 4)
   }
   return Buffer.concat([
@@ -59,20 +59,9 @@ function encodePNG(w, h, rgba) {
   ])
 }
 
-// ---------- 形状栅格化（布尔覆盖网格） ----------
+// ---------- 形状栅格化 ----------
 function makeGrid() {
   return { g: new Uint8Array(S * S), set(x, y) { if (x >= 0 && y >= 0 && x < S && y < S) this.g[y * S + x] = 1 } }
-}
-
-function fillRoundRect(grid, x, y, w, h, r) {
-  const X = x * SS, Y = y * SS, W = w * SS, H = h * SS, R = r * SS
-  for (let py = 0; py < H; py++) {
-    for (let px = 0; px < W; px++) {
-      const dx = px < R ? R - px : px > W - 1 - R ? px - (W - 1 - R) : 0
-      const dy = py < R ? R - py : py > H - 1 - R ? py - (H - 1 - R) : 0
-      if (dx * dx + dy * dy <= R * R) grid.set(X + px, Y + py)
-    }
-  }
 }
 
 function fillCircle(grid, cx, cy, r) {
@@ -84,16 +73,25 @@ function fillCircle(grid, cx, cy, r) {
   }
 }
 
-function clearRoundRect(grid, x, y, w, h, r) {
+function clearCircle(grid, cx, cy, r) {
+  const CX = cx * SS, CY = cy * SS, R = r * SS
+  for (let py = -Math.ceil(R); py <= Math.ceil(R); py++) {
+    for (let px = -Math.ceil(R); px <= Math.ceil(R); px++) {
+      if (px * px + py * py <= R * R) {
+        const gx = CX + px, gy = CY + py
+        if (gx >= 0 && gy >= 0 && gx < S && gy < S) grid.g[gy * S + gx] = 0
+      }
+    }
+  }
+}
+
+function fillRoundRect(grid, x, y, w, h, r) {
   const X = x * SS, Y = y * SS, W = w * SS, H = h * SS, R = r * SS
   for (let py = 0; py < H; py++) {
     for (let px = 0; px < W; px++) {
       const dx = px < R ? R - px : px > W - 1 - R ? px - (W - 1 - R) : 0
       const dy = py < R ? R - py : py > H - 1 - R ? py - (H - 1 - R) : 0
-      if (dx * dx + dy * dy <= R * R) {
-        const gx = X + px, gy = Y + py
-        if (gx >= 0 && gy >= 0 && gx < S && gy < S) grid.g[gy * S + gx] = 0
-      }
+      if (dx * dx + dy * dy <= R * R) grid.set(X + px, Y + py)
     }
   }
 }
@@ -123,27 +121,18 @@ function fillTriangle(grid, x1, y1, x2, y2, x3, y3) {
 
 // ---------- 图标定义（81 坐标系） ----------
 const icons = {
-  'tab-smoke': (g) => {
-    fillRoundRect(g, 12, 44, 56, 18, 7) // 烟身
-    fillCircle(g, 12, 53, 8) // 烟头火星
-    fillCircle(g, 36, 27, 6) // 烟雾
-    fillCircle(g, 50, 16, 8)
+  play: (g) => {
+    fillCircle(g, 40.5, 40.5, 26)
+    clearCircle(g, 40.5, 40.5, 17) // 圆环
   },
-  'tab-skills': (g) => {
-    fillRoundRect(g, 14, 14, 24, 24, 6)
-    fillRoundRect(g, 43, 14, 24, 24, 6)
-    fillRoundRect(g, 14, 43, 24, 24, 6)
-    fillRoundRect(g, 43, 43, 24, 24, 12) // 右下圆一点，做"点亮"暗示
+  collection: (g) => {
+    fillCircle(g, 29, 33, 13)
+    fillCircle(g, 52, 33, 13)
+    fillTriangle(g, 17, 40, 64, 40, 40.5, 68) // 心形
   },
-  'tab-gallery': (g) => {
-    fillRoundRect(g, 15, 15, 51, 51, 9)
-    clearRoundRect(g, 24, 24, 33, 33, 5)
-    fillCircle(g, 40.5, 40.5, 7)
-  },
-  'tab-trial': (g) => {
-    fillRoundRect(g, 22, 12, 7, 56, 3) // 旗杆
-    fillTriangle(g, 33, 16, 62, 28, 33, 40) // 旗帜
-    fillRoundRect(g, 16, 66, 19, 5, 2) // 底座
+  profile: (g) => {
+    fillCircle(g, 40.5, 27, 13)
+    fillRoundRect(g, 18, 46, 45, 22, 11) // 肩部
   },
 }
 
@@ -159,7 +148,7 @@ function render(design, colorHex) {
   for (let y = 0; y < SIZE; y++) {
     for (let x = 0; x < SIZE; x++) {
       let cov = 0
-      for (let sy = 0; sy < SS; sy++) for (let sx = 0; sx < SS; sx++) cov += grid.g[y * SS * S + x * SS + sy * S + sx]
+      for (let sy = 0; sy < SS; sy++) for (let sx = 0; sx < SS; sx++) cov += grid.g[(y * SS + sy) * S + x * SS + sx]
       const a = Math.round((cov / (SS * SS)) * 255)
       const o = (y * SIZE + x) * 4
       rgba[o] = r
@@ -172,8 +161,8 @@ function render(design, colorHex) {
 }
 
 for (const [name, design] of Object.entries(icons)) {
-  writeFileSync(join(outDir, `${name}.png`), render(design, '#8a8aa0'))
-  writeFileSync(join(outDir, `${name}-active.png`), render(design, '#00ffd5'))
+  writeFileSync(join(outDir, `${name}.png`), render(design, '#5C6468'))
+  writeFileSync(join(outDir, `${name}-active.png`), render(design, '#75F4D2'))
 }
 
 console.log('✅ 图标已生成到', outDir)

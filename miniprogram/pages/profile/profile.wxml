@@ -1,0 +1,55 @@
+<view class="page">
+  <!-- 等级卡 -->
+  <view class="card level-card">
+    <view class="lv-row">
+      <text class="lv">Lv.{{level}}</text>
+      <text class="currency">尼古丁 {{currency}}</text>
+    </view>
+    <view class="xp-bar">
+      <view class="xp-fill" style="width: {{xpPercent}}%"></view>
+    </view>
+    <view class="xp-text">EXP {{xpText}}</view>
+  </view>
+
+  <!-- 今日目标 -->
+  <view class="card">
+    <view class="card-title">今日目标 <text class="date">{{dailyDate}}</text></view>
+    <view class="daily-row" wx:for="{{dailyTasks}}" wx:key="id">
+      <text class="daily-desc {{item.done ? 'done' : ''}}">{{item.done ? '✓' : '○'}} {{item.desc}}</text>
+      <text class="daily-meta">{{item.progress}}/{{item.target}} · +{{item.reward}}</text>
+    </view>
+  </view>
+
+  <!-- 统计 -->
+  <view class="card">
+    <view class="card-title">烟民档案</view>
+    <view class="stat-grid">
+      <view class="stat-item" wx:for="{{stats}}" wx:key="label">
+        <text class="stat-num">{{item.value}}</text>
+        <text class="stat-label">{{item.label}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 成就 -->
+  <view class="card">
+    <view class="card-title">成就 <text class="done-count">{{doneCount}}/{{achievements.length}}</text></view>
+    <view class="ach-row {{item.done ? 'ach-done' : ''}}" wx:for="{{achievements}}" wx:key="id">
+      <view class="ach-text">
+        <text class="ach-name">{{item.name}}</text>
+        <text class="ach-desc">{{item.desc}}</text>
+      </view>
+      <text class="ach-check">{{item.done ? '✓' : ''}}</text>
+    </view>
+  </view>
+
+  <!-- 设置 -->
+  <view class="card">
+    <view class="card-title">设置</view>
+    <view class="setting-row" bindtap="toggleSound">
+      <text>音效</text>
+      <text class="sound">{{soundOn ? '🔊 开' : '🔇 关'}}</text>
+    </view>
+    <view class="about">CyberSmoke · 纯属虚拟互动体验，不提倡吸烟\n无限吐雾模式 Lv.{{endlessUnlockLevel}} 解锁</view>
+  </view>
+</view>

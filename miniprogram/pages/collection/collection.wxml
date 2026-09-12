@@ -1,0 +1,19 @@
+<view class="page">
+  <view class="head">
+    <view class="title">烟圈图鉴</view>
+    <view class="sub">已收集 {{unlockedCount}}/{{total}}</view>
+  </view>
+
+  <view class="grid">
+    <view class="card {{item.unlocked ? 'on' : ''}} rarity-{{item.rarity}}" wx:for="{{list}}" wx:key="id">
+      <view class="ring-visual {{item.unlocked ? 'vis-on' : ''}}"></view>
+      <view class="name">{{item.name}}</view>
+      <view class="rarity">{{item.rarity}}</view>
+      <view class="desc">{{item.desc}}</view>
+      <view class="meta" wx:if="{{item.unlocked}}">完成 {{item.count}} 次 · 最佳 {{item.best}}</view>
+      <view class="meta locked" wx:else>未解锁</view>
+    </view>
+  </view>
+
+  <view class="foot">完成对应条件的烟圈即可点亮图鉴</view>
+</view>
