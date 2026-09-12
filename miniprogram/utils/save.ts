@@ -33,10 +33,15 @@ export interface SaveData {
   gachaCount: number;
   /** 累计收烟灰（烟灰单位） */
   ashCollected: number;
+  /** 已完成的试炼关卡 id */
+  trialDone: string[];
 }
 
 const num = (v: unknown, dflt: number): number =>
   typeof v === 'number' && Number.isFinite(v) && v >= 0 ? v : dflt;
+
+const strList = (v: unknown): string[] =>
+  Array.isArray(v) ? v.filter((s) => typeof s === 'string') : [];
 
 function sanitizeSlots(raw: unknown): BurnSlot[] {
   if (!Array.isArray(raw)) return [];
@@ -71,6 +76,7 @@ export function loadSave(): SaveData | null {
         maxStreak: num(raw.maxStreak, 0),
         gachaCount: num(raw.gachaCount, 0),
         ashCollected: num(raw.ashCollected, 0),
+        trialDone: strList(raw.trialDone),
       };
     }
   } catch (e) {

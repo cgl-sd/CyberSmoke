@@ -1,0 +1,102 @@
+/* 试炼页样式 */
+.page {
+  min-height: 100vh;
+  padding: 40rpx 32rpx 60rpx;
+  box-sizing: border-box;
+}
+
+.head-title {
+  font-size: 44rpx;
+  font-weight: 700;
+  color: #ff2e88;
+  letter-spacing: 6rpx;
+  text-shadow: 0 0 12rpx rgba(255, 46, 136, 0.6);
+}
+
+.head-sub {
+  margin-top: 12rpx;
+  font-size: 22rpx;
+  color: #8a8aa0;
+}
+
+.trial-list {
+  margin-top: 40rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.trial-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1rpx solid rgba(138, 138, 160, 0.25);
+  border-radius: 20rpx;
+  padding: 28rpx;
+}
+
+.trial-card.current {
+  border-color: rgba(255, 46, 136, 0.7);
+  box-shadow: 0 0 28rpx rgba(255, 46, 136, 0.25);
+}
+
+.trial-card.done {
+  border-color: rgba(0, 255, 213, 0.5);
+  opacity: 0.85;
+}
+
+.trial-card.locked {
+  opacity: 0.45;
+}
+
+.trial-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.trial-name {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #e8e8f0;
+}
+
+.trial-card.current .trial-name {
+  color: #ff2e88;
+}
+
+.trial-card.done .trial-name {
+  color: #00ffd5;
+}
+
+.trial-reward {
+  font-size: 24rpx;
+  color: #ffd166;
+  font-weight: 700;
+}
+
+.trial-desc {
+  margin-top: 14rpx;
+  font-size: 24rpx;
+  color: #8a8aa0;
+  line-height: 1.6;
+}
+
+.trial-state {
+  margin-top: 16rpx;
+  font-size: 20rpx;
+  color: #55556a;
+}
+
+.trial-card.current .trial-state {
+  color: #ff2e88;
+}
+
+.trial-card.done .trial-state {
+  color: #00ffd5;
+}
+
+.foot {
+  margin-top: 48rpx;
+  text-align: center;
+  font-size: 20rpx;
+  color: #55556a;
+}

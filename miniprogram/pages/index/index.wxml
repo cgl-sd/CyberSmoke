@@ -1,10 +1,10 @@
-<view class="page {{coughing ? 'shake' : ''}}">
+<view class="page">
   <canvas type="2d" id="smokeCanvas" class="smoke-canvas"></canvas>
 
   <view class="cough-overlay" wx:if="{{coughing}}"></view>
 
   <view
-    class="gesture-layer"
+    class="gesture-layer {{coughing ? 'shake' : ''}}"
     bindtouchstart="onTouchStart"
     bindtouchmove="onTouchMove"
     bindtouchend="onTouchEnd"
@@ -85,6 +85,11 @@
         <view class="phase-text">{{phase === 'igniting' ? '🔥' : phase === 'lit' ? '🚬' : '💨'}}</view>
       </view>
       <view class="cig-name">当前烟款：{{currentCigName}} · 收益 ×{{currentCigMult}}</view>
+
+      <!-- 当前试炼 -->
+      <view class="trial-chip" wx:if="{{trialName}}" catchtap="goTrial">
+        🎯 当前试炼：{{trialName}} · 奖 {{trialReward}} 尼古丁
+      </view>
 
       <!-- 戒烟挑战 -->
       <view class="quit-area" catchtap="noop">

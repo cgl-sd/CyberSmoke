@@ -95,6 +95,33 @@ export class SmokeCanvas {
     this.trim();
   }
 
+  /** 试炼完成庆祝：从指定点喷出全彩粒子泉 */
+  emitCelebration(originX: number, originY: number): void {
+    const colors = ['#00ffd5', '#ff2e88', '#ffd166', '#a78bfa', '#38bdf8'];
+    for (let i = 0; i < 70; i++) {
+      const a = Math.random() * Math.PI * 2;
+      const sp = 120 + Math.random() * 260;
+      const maxLife = 1.2 + Math.random() * 1.2;
+      this.particles.push({
+        x: originX,
+        y: originY,
+        vx: Math.cos(a) * sp * 0.55,
+        vy: -Math.abs(Math.sin(a)) * sp - 60,
+        life: maxLife,
+        maxLife,
+        size: 4 + Math.random() * 7,
+        grow: 4 + Math.random() * 6,
+        color: colors[i % colors.length],
+        baseAlpha: 0.7,
+        type: 'puff',
+        wobbleAmp: 10,
+        wobbleSpeed: 2,
+        phase: Math.random() * Math.PI * 2,
+      });
+    }
+    this.trim();
+  }
+
   private trim(): void {
     if (this.particles.length > MAX_PARTICLES) {
       this.particles.splice(0, this.particles.length - MAX_PARTICLES);

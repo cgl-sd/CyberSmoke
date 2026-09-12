@@ -98,6 +98,29 @@ function clearRoundRect(grid, x, y, w, h, r) {
   }
 }
 
+function fillTriangle(grid, x1, y1, x2, y2, x3, y3) {
+  const p = [
+    [x1 * SS, y1 * SS],
+    [x2 * SS, y2 * SS],
+    [x3 * SS, y3 * SS],
+  ]
+  const sign = (ax, ay, bx, by, cx, cy) => (bx - ax) * (cy - ay) - (by - ay) * (cx - ax)
+  const minX = Math.floor(Math.min(...p.map((q) => q[0])))
+  const maxX = Math.ceil(Math.max(...p.map((q) => q[0])))
+  const minY = Math.floor(Math.min(...p.map((q) => q[1])))
+  const maxY = Math.ceil(Math.max(...p.map((q) => q[1])))
+  for (let py = minY; py <= maxY; py++) {
+    for (let px = minX; px <= maxX; px++) {
+      const d1 = sign(p[0][0], p[0][1], p[1][0], p[1][1], px, py)
+      const d2 = sign(p[1][0], p[1][1], p[2][0], p[2][1], px, py)
+      const d3 = sign(p[2][0], p[2][1], p[0][0], p[0][1], px, py)
+      const neg = d1 < 0 || d2 < 0 || d3 < 0
+      const pos = d1 > 0 || d2 > 0 || d3 > 0
+      if (!(neg && pos)) grid.set(px, py)
+    }
+  }
+}
+
 // ---------- 图标定义（81 坐标系） ----------
 const icons = {
   'tab-smoke': (g) => {
@@ -116,6 +139,11 @@ const icons = {
     fillRoundRect(g, 15, 15, 51, 51, 9)
     clearRoundRect(g, 24, 24, 33, 33, 5)
     fillCircle(g, 40.5, 40.5, 7)
+  },
+  'tab-trial': (g) => {
+    fillRoundRect(g, 22, 12, 7, 56, 3) // 旗杆
+    fillTriangle(g, 33, 16, 62, 28, 33, 40) // 旗帜
+    fillRoundRect(g, 16, 66, 19, 5, 2) // 底座
   },
 }
 

@@ -23,6 +23,7 @@ import {
 } from '../../data/game';
 import { persist } from '../../utils/save';
 import { playSound } from '../../utils/sound';
+import { completedTrials, currentTrialId, trialById } from '../../utils/trial';
 
 const app = getApp<IAppOption>();
 
@@ -67,6 +68,9 @@ Page({
     sober: false,
     // 设置
     soundOn: true,
+    // 试炼
+    trialName: '',
+    trialReward: 0,
   },
 
   smoke: null as SmokeCanvas | null,
@@ -75,6 +79,7 @@ Page({
   coughTimer: 0 as number,
   ashTimer: 0 as number,
   inhaleStart: 0,
+  igniteStartAt: 0,
   coughing: false,
   ashSlots: [] as BurnSlot[],
   // 烟圈手势
@@ -83,9 +88,12 @@ Page({
   // 当前烟款粒子手感
   puffSize: 1,
   puffSpeed: 1,
+  // 连抽计时（链式吞吐试炼）
+  recentSettles: [] as number[],
 
   onLoad() {
     this.refreshFromGlobal();
+    this.refreshTrialChip();
   },
 
   onReady() {
@@ -107,10 +115,14 @@ Page({
     this.refreshFromGlobal();
     this.refreshAsh();
     this.refreshQuit();
+    this.refreshTrialChip();
     this.applySmokeStyle();
+    if (this.smoke) this.smoke.start();
     if (!this.ashTimer) {
       this.ashTimer = setInterval(() => this.refreshAsh(), 15000) as unknown as number;
     }
+    // 试炼的离线判定（连击/戒烟结局）在回前台时补检
+    this.runTrialChecks(['streak_3', 'sober']);
   },
 
   onHide() {
@@ -118,6 +130,8 @@ Page({
       clearInterval(this.ashTimer);
       this.ashTimer = 0;
     }
+    // 页面不可见时停掉渲染循环，避免后台空转
+    if (this.smoke) this.smoke.stop();
     this.persistAll();
   },
 
@@ -222,6 +236,7 @@ Page({
     const g = app.globalData;
     const skills = getSkillState(g.cigaretteCount);
     const delay = skills.fastLight ? 150 : 700;
+    this.igniteStartAt = Date.now();
     wx.vibrateShort({ type: 'light' });
     playSound('light', g.soundOn);
     this.setData({ phase: 'igniting', hintText: HINTS.igniting, lightBtnText: '…' });
@@ -362,6 +377,24 @@ Page({
     if (titleAfter !== titleBefore) messages.push(`称号晋升「${titleAfter}」`);
     if (quitFailed) messages.push('戒烟挑战失败');
 
+    // —— 赛博试炼（顺序闯关）——
+    this.recentSettles.push(Date.now());
+    if (this.recentSettles.length > 3) this.recentSettles.shift();
+    const trialCandidates: string[] = [];
+    if (after >= 1) trialCandidates.push('first_smoke');
+    if (charge >= 0.8) trialCandidates.push('deep_drag');
+    if (this.igniteStartAt && Date.now() - this.igniteStartAt <= 5000) {
+      trialCandidates.push('quick_hand');
+    }
+    if (ringsDrawn >= 2) trialCandidates.push('double_ring');
+    if (earn >= 40) trialCandidates.push('big_puff');
+    if (this.recentSettles.length === 3 && Date.now() - this.recentSettles[0] <= 60000) {
+      trialCandidates.push('chain_three');
+    }
+    if (g.streakDays >= 3) trialCandidates.push('streak_3');
+    if (g.soberAchieved) trialCandidates.push('sober');
+    for (const m of this.runTrialChecks(trialCandidates)) messages.push(m);
+
     this.persistAll();
     this.applySmokeStyle();
     this.refreshAsh();
@@ -464,6 +497,45 @@ Page({
     this.persistAll();
     this.setData({ soundOn: g.soundOn });
     if (g.soundOn) playSound('light', true);
+  },
+
+  /** 试炼结算：只有当前关命中才算完成；完成时发奖励 + 全屏庆祝粒子 */
+  runTrialChecks(candidates: string[]): string[] {
+    const g = app.globalData;
+    const done = completedTrials(g.trialDone, candidates);
+    const msgs: string[] = [];
+    if (!done.length) return msgs;
+    for (const id of done) {
+      g.trialDone.push(id);
+      const t = trialById(id);
+      if (t) {
+        g.nicotine += t.reward;
+        msgs.push(`试炼「${t.name}」完成 +${t.reward}`);
+      }
+    }
+    this.persistAll();
+    playSound('reward', g.soundOn);
+    if (this.smoke) {
+      const win = wx.getWindowInfo();
+      this.smoke.emitCelebration(win.windowWidth * 0.5, win.windowHeight * 0.55);
+    }
+    this.refreshFromGlobal();
+    this.refreshTrialChip();
+    return msgs;
+  },
+
+  refreshTrialChip() {
+    const g = app.globalData;
+    const cur = currentTrialId(g.trialDone);
+    const t = cur ? trialById(cur) : null;
+    this.setData({
+      trialName: t ? t.name : '',
+      trialReward: t ? t.reward : 0,
+    });
+  },
+
+  goTrial() {
+    wx.switchTab({ url: '/pages/trial/trial' });
   },
 
   goGallery() {

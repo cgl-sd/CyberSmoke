@@ -1,5 +1,6 @@
 // pages/gallery/gallery.ts —— 烟款图鉴：购买、装备 + 烟蒂合成抽奖
 import { GACHA, CIGARETTES, getCig, rollGacha } from '../../data/game';
+import { currentTrialId, trialById } from '../../utils/trial';
 import { persist } from '../../utils/save';
 import { playSound } from '../../utils/sound';
 
@@ -76,6 +77,14 @@ Page({
     g.nicotine -= cig.price;
     g.ownedCigarettes.push(id);
     g.currentCigarette = id;
+    // 收藏家试炼：集齐 3 款烟
+    if (g.ownedCigarettes.length >= 3 && currentTrialId(g.trialDone) === 'collector') {
+      g.trialDone.push('collector');
+      const reward = trialById('collector')?.reward || 0;
+      g.nicotine += reward;
+      playSound('reward', g.soundOn);
+      wx.showToast({ title: `🎯 试炼「收藏家」完成 +${reward} 尼古丁`, icon: 'none', duration: 2200 });
+    }
     persist(g);
     playSound('reward', g.soundOn);
     wx.showToast({ title: `已购买并装备「${cig.name}」`, icon: 'none' });

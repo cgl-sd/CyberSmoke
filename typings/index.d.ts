@@ -35,5 +35,7 @@ interface IAppOption {
     gachaCount: number;
     /** 累计收烟灰（烟灰单位） */
     ashCollected: number;
+    /** 已完成的试炼关卡 id */
+    trialDone: string[];
   };
 }

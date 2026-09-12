@@ -19,6 +19,7 @@ App<IAppOption>({
     maxStreak: 0,
     gachaCount: 0,
     ashCollected: 0,
+    trialDone: [],
   },
 
   onLaunch() {
@@ -40,6 +41,7 @@ App<IAppOption>({
       this.globalData.maxStreak = saved.maxStreak;
       this.globalData.gachaCount = saved.gachaCount;
       this.globalData.ashCollected = saved.ashCollected;
+      this.globalData.trialDone = saved.trialDone;
     }
     // 保证烟款状态合法
     if (this.globalData.ownedCigarettes.indexOf('slim') < 0) {
