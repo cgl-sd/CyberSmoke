@@ -8,6 +8,7 @@
   },
   "devDependencies": {
     "miniprogram-api-typings": "^4.0.5",
+    "miniprogram-automator": "^0.12.1",
     "typescript": "^5.5.4"
   }
 }

@@ -1,19 +1,56 @@
-<view class="container">
-  <view class="title">CYBER</view>
-  <view class="title neon">SMOKE</view>
-  <view class="subtitle">赛博吸烟 · 纯属虚拟 · 不提倡吸烟</view>
+<view class="page">
+  <canvas type="2d" id="smokeCanvas" class="smoke-canvas"></canvas>
 
-  <view class="stats">
-    <view class="stat">
-      <text class="num">{{cigaretteCount}}</text>
-      <text class="label">已抽支数</text>
+  <view
+    class="gesture-layer"
+    bindtouchstart="onTouchStart"
+    bindtouchend="onTouchEnd"
+    bindtouchcancel="onTouchEnd"
+  >
+    <view class="header">
+      <view class="title-main">{{titleName}}</view>
+      <view class="title-sub">赛博吸烟 · 纯属虚拟 · 不提倡吸烟</view>
+      <view class="stats-bar">
+        <view class="stat">
+          <text class="stat-num">{{cigaretteCount}}</text>
+          <text class="stat-label">已抽支数</text>
+        </view>
+        <view class="stat">
+          <text class="stat-num nicotine">{{nicotine}}</text>
+          <text class="stat-label">尼古丁</text>
+        </view>
+      </view>
     </view>
-    <view class="stat">
-      <text class="num">{{nicotine}}</text>
-      <text class="label">尼古丁</text>
+
+    <view class="stage">
+      <view class="cig {{phase === 'lit' || phase === 'inhaling' ? 'cig-lit' : ''}}">
+        <view class="cig-flame {{phase === 'igniting' || phase === 'lit' ? 'flame-show' : ''}}"></view>
+        <view class="cig-stick">
+          <view
+            class="cig-ember"
+            style="{{phase === 'inhaling' ? 'transform: scale(' + (1 + chargePercent / 100) + ');' : ''}}"
+          ></view>
+          <view class="cig-band"></view>
+          <view class="cig-body"></view>
+        </view>
+      </view>
+
+      <view class="hint">{{hintText}}</view>
+
+      <view class="charge-wrap" wx:if="{{phase === 'inhaling'}}">
+        <view class="charge-bar">
+          <view class="charge-fill" style="width: {{chargePercent}}%"></view>
+        </view>
+        <view class="charge-label">烟雾蓄力 {{chargePercent}}%</view>
+      </view>
+    </view>
+
+    <view class="dock">
+      <button wx:if="{{phase === 'idle'}}" class="light-btn" bindtap="onLightUp">{{lightBtnText}}</button>
+      <view wx:else class="light-btn light-btn-ghost">
+        <view class="phase-text">{{phase === 'igniting' ? '🔥' : phase === 'lit' ? '🚬' : '💨'}}</view>
+      </view>
+      <view class="cig-name">当前烟款：{{currentCigName}} · 收益 ×{{currentCigMult}}</view>
     </view>
   </view>
-
-  <button class="light-btn" bindtap="onLightUp">点 火</button>
-  <view class="tip">MVP 脚手架 · 抽烟交互开发中</view>
 </view>

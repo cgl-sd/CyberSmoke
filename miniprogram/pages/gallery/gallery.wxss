@@ -1,0 +1,103 @@
+/* 图鉴页样式 */
+.page {
+  min-height: 100vh;
+  padding: 40rpx 32rpx 60rpx;
+  box-sizing: border-box;
+}
+
+.head-title {
+  font-size: 44rpx;
+  font-weight: 700;
+  color: #00ffd5;
+  letter-spacing: 6rpx;
+  text-shadow: 0 0 12rpx rgba(0, 255, 213, 0.6);
+}
+
+.head-sub {
+  margin-top: 12rpx;
+  font-size: 22rpx;
+  color: #8a8aa0;
+}
+
+.cig-list {
+  margin-top: 40rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.cig-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1rpx solid rgba(138, 138, 160, 0.25);
+  border-radius: 20rpx;
+  padding: 28rpx;
+}
+
+.cig-card.equipped {
+  border-color: rgba(0, 255, 213, 0.6);
+  box-shadow: 0 0 24rpx rgba(0, 255, 213, 0.15);
+}
+
+.cig-head {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.cig-dot {
+  width: 24rpx;
+  height: 24rpx;
+  border-radius: 50%;
+  box-shadow: 0 0 12rpx currentColor;
+}
+
+.cig-name {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #e8e8f0;
+  flex: 1;
+}
+
+.cig-card.equipped .cig-name {
+  color: #00ffd5;
+}
+
+.cig-mult {
+  font-size: 22rpx;
+  color: #ff2e88;
+}
+
+.cig-desc {
+  margin-top: 14rpx;
+  font-size: 24rpx;
+  color: #8a8aa0;
+  line-height: 1.6;
+}
+
+.cig-foot {
+  margin-top: 20rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cig-price {
+  font-size: 22rpx;
+  color: #8a8aa0;
+}
+
+.cig-action {
+  font-size: 22rpx;
+  color: #00ffd5;
+}
+
+.cig-action.off {
+  color: #55556a;
+}
+
+.foot {
+  margin-top: 48rpx;
+  text-align: center;
+  font-size: 20rpx;
+  color: #55556a;
+}

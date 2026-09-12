@@ -1,0 +1,21 @@
+<view class="page">
+  <view class="head">
+    <view class="head-title">技能矩阵</view>
+    <view class="head-sub">当前称号：{{titleName}} · 已抽 {{count}} 支</view>
+  </view>
+
+  <view class="skill-list">
+    <view class="skill-card {{item.unlocked ? 'on' : ''}}" wx:for="{{list}}" wx:key="id">
+      <view class="skill-top">
+        <text class="skill-name">{{item.name}}</text>
+        <text class="skill-state">{{item.unlocked ? '已解锁' : item.remaining + ' 支后解锁'}}</text>
+      </view>
+      <view class="skill-desc">{{item.desc}}</view>
+      <view class="skill-bar">
+        <view class="skill-fill" style="width: {{item.percent}}%"></view>
+      </view>
+    </view>
+  </view>
+
+  <view class="foot">技能随累计抽烟支数自动解锁</view>
+</view>

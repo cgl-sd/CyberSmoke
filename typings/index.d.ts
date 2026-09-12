@@ -7,5 +7,9 @@ interface IAppOption {
     nicotine: number;
     /** 累计抽烟支数 */
     cigaretteCount: number;
+    /** 已拥有烟款 id 列表 */
+    ownedCigarettes: string[];
+    /** 当前装备烟款 id */
+    currentCigarette: string;
   };
 }

@@ -1,10 +1,30 @@
 {
-  "pages": ["pages/index/index"],
+  "pages": ["pages/index/index", "pages/skills/skills", "pages/gallery/gallery"],
   "window": {
     "navigationBarTitleText": "CyberSmoke 赛博吸烟",
     "navigationBarBackgroundColor": "#0a0a12",
     "navigationBarTextStyle": "white",
     "backgroundColor": "#0a0a12"
+  },
+  "tabBar": {
+    "color": "#8a8aa0",
+    "selectedColor": "#00ffd5",
+    "backgroundColor": "#0a0a12",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "抽烟"
+      },
+      {
+        "pagePath": "pages/skills/skills",
+        "text": "技能"
+      },
+      {
+        "pagePath": "pages/gallery/gallery",
+        "text": "图鉴"
+      }
+    ]
   },
   "style": "v2",
   "sitemapLocation": "sitemap.json"

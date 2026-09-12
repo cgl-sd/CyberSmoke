@@ -1,36 +1,53 @@
 /* 首页样式 —— 赛博朋克暗色风 */
-.container {
+.page {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.smoke-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.gesture-layer {
+  position: relative;
+  z-index: 2;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding-top: 140rpx;
-  min-height: 100vh;
+  height: 100vh;
 }
 
-.title {
-  font-size: 76rpx;
-  font-weight: 700;
-  letter-spacing: 14rpx;
-  color: #e8e8f0;
-  line-height: 1.2;
+.header {
+  padding: 80rpx 40rpx 0;
+  text-align: center;
 }
 
-.title.neon {
+.title-main {
+  font-size: 40rpx;
   color: #00ffd5;
-  text-shadow: 0 0 16rpx rgba(0, 255, 213, 0.8);
+  letter-spacing: 6rpx;
+  text-shadow: 0 0 12rpx rgba(0, 255, 213, 0.6);
 }
 
-.subtitle {
-  margin-top: 24rpx;
+.title-sub {
+  margin-top: 10rpx;
+  font-size: 20rpx;
   color: #8a8aa0;
-  font-size: 24rpx;
   letter-spacing: 4rpx;
 }
 
-.stats {
+.stats-bar {
   display: flex;
-  gap: 140rpx;
-  margin-top: 100rpx;
+  justify-content: center;
+  gap: 120rpx;
+  margin-top: 36rpx;
 }
 
 .stat {
@@ -39,39 +56,183 @@
   align-items: center;
 }
 
-.stat .num {
-  font-size: 56rpx;
-  color: #ff2e88;
+.stat-num {
+  font-size: 52rpx;
   font-weight: 700;
+  color: #e8e8f0;
 }
 
-.stat .label {
-  margin-top: 8rpx;
-  font-size: 24rpx;
+.stat-num.nicotine {
+  color: #ff2e88;
+}
+
+.stat-label {
+  margin-top: 4rpx;
+  font-size: 20rpx;
   color: #8a8aa0;
 }
 
-.light-btn {
-  margin-top: 140rpx;
+.stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.cig {
+  position: relative;
+  transform: rotate(-18deg);
+}
+
+.cig-stick {
+  display: flex;
+  align-items: center;
   width: 320rpx;
-  height: 320rpx;
+  height: 36rpx;
+  border-radius: 10rpx;
+  box-shadow: 0 0 20rpx rgba(0, 255, 213, 0.15);
+}
+
+.cig-ember {
+  width: 22rpx;
+  height: 22rpx;
   border-radius: 50%;
-  line-height: 320rpx;
-  font-size: 40rpx;
+  background: #ff5a3c;
+  margin-left: 6rpx;
+  box-shadow: 0 0 12rpx rgba(255, 90, 60, 0.9);
+  opacity: 0.45;
+  transition: transform 0.2s;
+}
+
+.cig-lit .cig-ember {
+  opacity: 1;
+  animation: ember-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes ember-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 10rpx rgba(255, 90, 60, 0.8);
+  }
+  50% {
+    box-shadow: 0 0 24rpx rgba(255, 90, 60, 1);
+  }
+}
+
+.cig-band {
+  width: 18rpx;
+  height: 100%;
+  background: #00ffd5;
+  opacity: 0.8;
+  margin-left: 8rpx;
+}
+
+.cig-body {
+  flex: 1;
+  height: 100%;
+  background: linear-gradient(180deg, #f5f5fa, #c9c9d6);
+  border-radius: 0 10rpx 10rpx 0;
+}
+
+.cig-flame {
+  position: absolute;
+  top: -34rpx;
+  left: -2rpx;
+  width: 26rpx;
+  height: 34rpx;
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  background: radial-gradient(circle at 50% 70%, #ffd166, #ff7b3c 70%, transparent);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.flame-show {
+  opacity: 1;
+  animation: flame-flicker 0.35s ease-in-out infinite alternate;
+}
+
+@keyframes flame-flicker {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.25, 1.1);
+  }
+}
+
+.hint {
+  margin-top: 90rpx;
+  color: #8a8aa0;
+  font-size: 26rpx;
+  letter-spacing: 2rpx;
+}
+
+.charge-wrap {
+  margin-top: 40rpx;
+  width: 320rpx;
+}
+
+.charge-bar {
+  height: 12rpx;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 6rpx;
+  overflow: hidden;
+}
+
+.charge-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00ffd5, #ff2e88);
+  transition: width 0.1s linear;
+}
+
+.charge-label {
+  margin-top: 12rpx;
+  text-align: center;
+  color: #00ffd5;
+  font-size: 20rpx;
+}
+
+.dock {
+  padding: 0 40rpx 48rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.light-btn {
+  width: 280rpx;
+  height: 110rpx;
+  line-height: 110rpx;
+  border-radius: 55rpx;
+  background: #00ffd5;
+  color: #0a0a12;
+  font-size: 34rpx;
   font-weight: 700;
   letter-spacing: 8rpx;
-  color: #0a0a12;
-  background: #00ffd5;
   border: none;
-  box-shadow: 0 0 48rpx rgba(0, 255, 213, 0.6);
+  box-shadow: 0 0 40rpx rgba(0, 255, 213, 0.5);
+  padding: 0;
 }
 
 .light-btn::after {
   border: none;
 }
 
-.tip {
-  margin-top: 72rpx;
+.light-btn-ghost {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.55;
+}
+
+.phase-text {
+  font-size: 44rpx;
+  line-height: 1;
+}
+
+.cig-name {
+  margin-top: 24rpx;
   color: #55556a;
   font-size: 22rpx;
 }
