@@ -30,6 +30,7 @@ export class SmokeCanvas {
   private running = false;
   private lastTs = 0;
   private ambientClock = 0;
+  private dirty = false;
 
   /** 初始化画布并启动渲染循环（cssWidth/cssHeight 为逻辑像素） */
   init(canvas: any, cssWidth: number, cssHeight: number): void {
@@ -77,14 +78,19 @@ export class SmokeCanvas {
     this.running = false;
   }
 
-  /** 吐雾：从烟头位置喷出一团粒子；withRings 时附带烟圈 */
-  emitDrag(originX: number, originY: number, intensity: number, withRings: boolean): void {
+  /** 吐雾：从烟头位置喷出一团粒子；rings 为烟圈数量，因子控制烟款手感 */
+  emitDrag(
+    originX: number,
+    originY: number,
+    intensity: number,
+    rings: number,
+    sizeFactor = 1,
+    speedFactor = 1,
+  ): void {
     const count = Math.round(36 + 84 * intensity);
-    for (let i = 0; i < count; i++) this.spawnPuff(originX, originY, intensity);
-    if (withRings) {
-      for (let i = 0; i < 3; i++) {
-        this.particles.push(this.makeRing(originX, originY - 6, i));
-      }
+    for (let i = 0; i < count; i++) this.spawnPuff(originX, originY, intensity, sizeFactor, speedFactor);
+    for (let i = 0; i < rings; i++) {
+      this.particles.push(this.makeRing(originX, originY - 6, i, sizeFactor, speedFactor));
     }
     this.trim();
   }
@@ -99,16 +105,16 @@ export class SmokeCanvas {
     return this.colors[Math.floor(Math.random() * this.colors.length)];
   }
 
-  private spawnPuff(x: number, y: number, intensity: number): void {
+  private spawnPuff(x: number, y: number, intensity: number, sizeFactor: number, speedFactor: number): void {
     const maxLife = 1.4 + Math.random() * 1.4;
     this.particles.push({
       x: x + (Math.random() - 0.5) * 14,
       y: y + (Math.random() - 0.5) * 14,
-      vx: (Math.random() * 60 + 15) * (0.5 + intensity),
-      vy: -(30 + Math.random() * 90) * (0.5 + intensity * 0.8),
+      vx: (Math.random() * 60 + 15) * (0.5 + intensity) * speedFactor,
+      vy: -(30 + Math.random() * 90) * (0.5 + intensity * 0.8) * speedFactor,
       life: maxLife,
       maxLife,
-      size: 5 + Math.random() * 12,
+      size: (5 + Math.random() * 12) * sizeFactor,
       grow: 14 + Math.random() * 26,
       color: this.pickColor(),
       baseAlpha: 0.28 + Math.random() * 0.3,
@@ -119,15 +125,15 @@ export class SmokeCanvas {
     });
   }
 
-  private makeRing(x: number, y: number, idx: number): Particle {
+  private makeRing(x: number, y: number, idx: number, sizeFactor: number, speedFactor: number): Particle {
     return {
       x,
       y,
-      vx: 24 + idx * 10,
-      vy: -36,
+      vx: (24 + idx * 10) * speedFactor,
+      vy: -36 * speedFactor,
       life: 1.6,
       maxLife: 1.6,
-      size: 6 + idx * 10,
+      size: (6 + idx * 10) * sizeFactor,
       grow: 90 + idx * 30,
       color: this.pickColor(),
       baseAlpha: 0.5,
@@ -183,6 +189,15 @@ export class SmokeCanvas {
   private draw(): void {
     const ctx = this.ctx;
     if (!ctx) return;
+    // 空闲时不重绘，省电；但需在最后一帧粒子消散后清一次画布
+    if (this.particles.length === 0 && !this.ambient) {
+      if (this.dirty) {
+        ctx.clearRect(0, 0, this.width, this.height);
+        this.dirty = false;
+      }
+      return;
+    }
+    this.dirty = true;
     ctx.clearRect(0, 0, this.width, this.height);
     ctx.globalCompositeOperation = 'lighter';
     for (const p of this.particles) {

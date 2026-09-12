@@ -19,6 +19,13 @@ Page({
     titleName: '',
     count: 0,
     streakDays: 0,
+    // 烟民档案
+    maxStreak: 0,
+    ashCollected: 0,
+    gachaCount: 0,
+    ownedCount: 0,
+    cigTotal: 3,
+    sober: false,
   },
 
   onShow() {
@@ -28,6 +35,11 @@ Page({
       titleName: getTitle(count, g.soberAchieved),
       count,
       streakDays: g.streakDays,
+      maxStreak: g.maxStreak,
+      ashCollected: Math.round(g.ashCollected),
+      gachaCount: g.gachaCount,
+      ownedCount: g.ownedCigarettes.length,
+      sober: g.soberAchieved,
       list: SKILLS.map((s) => ({
         id: s.id,
         name: s.name,

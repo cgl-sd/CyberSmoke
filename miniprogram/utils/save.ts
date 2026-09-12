@@ -27,7 +27,16 @@ export interface SaveData {
   soberAchieved: boolean;
   /** 音效开关 */
   soundOn: boolean;
+  /** 最高晨烟连击 */
+  maxStreak: number;
+  /** 累计合成抽奖次数 */
+  gachaCount: number;
+  /** 累计收烟灰（烟灰单位） */
+  ashCollected: number;
 }
+
+const num = (v: unknown, dflt: number): number =>
+  typeof v === 'number' && Number.isFinite(v) && v >= 0 ? v : dflt;
 
 function sanitizeSlots(raw: unknown): BurnSlot[] {
   if (!Array.isArray(raw)) return [];
@@ -43,22 +52,25 @@ export function loadSave(): SaveData | null {
     if (raw && typeof raw.cigaretteCount === 'number') {
       return {
         version: 2,
-        nicotine: typeof raw.nicotine === 'number' ? raw.nicotine : 0,
-        cigaretteCount: raw.cigaretteCount,
+        nicotine: num(raw.nicotine, 0),
+        cigaretteCount: num(raw.cigaretteCount, 0),
         ownedCigarettes:
           Array.isArray(raw.ownedCigarettes) && raw.ownedCigarettes.length
             ? raw.ownedCigarettes
             : ['slim'],
         currentCigarette: typeof raw.currentCigarette === 'string' ? raw.currentCigarette : 'slim',
-        tar: typeof raw.tar === 'number' ? raw.tar : 0,
-        butts: typeof raw.butts === 'number' ? raw.butts : 0,
+        tar: num(raw.tar, 0),
+        butts: num(raw.butts, 0),
         burnSlots: sanitizeSlots(raw.burnSlots),
         lastSmokeDay: typeof raw.lastSmokeDay === 'string' ? raw.lastSmokeDay : '',
-        streakDays: typeof raw.streakDays === 'number' ? raw.streakDays : 0,
+        streakDays: num(raw.streakDays, 0),
         quitActive: raw.quitActive === true,
         quitStartDay: typeof raw.quitStartDay === 'string' ? raw.quitStartDay : '',
         soberAchieved: raw.soberAchieved === true,
         soundOn: raw.soundOn !== false,
+        maxStreak: num(raw.maxStreak, 0),
+        gachaCount: num(raw.gachaCount, 0),
+        ashCollected: num(raw.ashCollected, 0),
       };
     }
   } catch (e) {

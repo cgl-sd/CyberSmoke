@@ -83,6 +83,53 @@
   background: linear-gradient(90deg, #00ffd5, #ff2e88);
 }
 
+/* 烟民档案 */
+.archive-card {
+  margin-top: 40rpx;
+  background: rgba(255, 209, 102, 0.05);
+  border: 1rpx solid rgba(255, 209, 102, 0.35);
+  border-radius: 20rpx;
+  padding: 28rpx;
+}
+
+.archive-title {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #ffd166;
+  letter-spacing: 4rpx;
+}
+
+.archive-grid {
+  margin-top: 24rpx;
+  display: flex;
+}
+
+.archive-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.archive-num {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #e8e8f0;
+}
+
+.archive-label {
+  font-size: 18rpx;
+  color: #8a8aa0;
+}
+
+.archive-sober {
+  margin-top: 24rpx;
+  text-align: center;
+  font-size: 22rpx;
+  color: #00ffd5;
+}
+
 .foot {
   margin-top: 48rpx;
   text-align: center;

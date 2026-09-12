@@ -6,6 +6,7 @@
   <view
     class="gesture-layer"
     bindtouchstart="onTouchStart"
+    bindtouchmove="onTouchMove"
     bindtouchend="onTouchEnd"
     bindtouchcancel="onTouchEnd"
   >
@@ -14,15 +15,15 @@
       <view class="title-main">{{titleName}}</view>
       <view class="title-sub">赛博吸烟 · 纯属虚拟 · 不提倡吸烟</view>
       <view class="stats-bar">
-        <view class="stat">
+        <view class="stat" catchtap="goGallery">
           <text class="stat-num">{{cigaretteCount}}</text>
           <text class="stat-label">已抽支数</text>
         </view>
-        <view class="stat">
+        <view class="stat" catchtap="goGallery">
           <text class="stat-num nicotine">{{nicotine}}</text>
           <text class="stat-label">尼古丁</text>
         </view>
-        <view class="stat">
+        <view class="stat" catchtap="goSkills">
           <text class="stat-num streak">{{streakDays}}</text>
           <text class="stat-label">晨烟连击</text>
         </view>
@@ -71,7 +72,10 @@
         <view class="charge-bar">
           <view class="charge-fill" style="width: {{chargePercent}}%"></view>
         </view>
-        <view class="charge-label">烟雾蓄力 {{chargePercent}}%</view>
+        <view class="charge-label">
+          烟雾蓄力 {{chargePercent}}%
+          <text wx:if="{{ringCount > 0}}" class="ring-label">· 烟圈 ×{{ringCount}}</text>
+        </view>
       </view>
     </view>
 

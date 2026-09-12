@@ -29,5 +29,11 @@ interface IAppOption {
     soberAchieved: boolean;
     /** 音效开关 */
     soundOn: boolean;
+    /** 最高晨烟连击 */
+    maxStreak: number;
+    /** 累计合成抽奖次数 */
+    gachaCount: number;
+    /** 累计收烟灰（烟灰单位） */
+    ashCollected: number;
   };
 }

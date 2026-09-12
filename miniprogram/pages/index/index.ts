@@ -1,4 +1,4 @@
-// pages/index/index.ts —— 抽烟主界面：点火 → 长按吸入 → 松手吐雾
+// pages/index/index.ts —— 抽烟主界面：点火 → 长按吸入（可画烟圈连击）→ 松手吐雾
 import { SmokeCanvas } from '../../utils/particles';
 import {
   ASH,
@@ -16,6 +16,7 @@ import {
   getSkillState,
   getTitle,
   nextStreak,
+  ringFactor,
   tarGain,
   todayStr,
   daysBetween,
@@ -30,9 +31,14 @@ type Phase = 'idle' | 'igniting' | 'lit' | 'inhaling';
 const HINTS: Record<Phase, string> = {
   idle: '点击下方按钮点燃一支烟',
   igniting: '划火柴中…',
-  lit: '长按屏幕任意处吸入',
+  lit: '长按屏幕吸入 · 画圈出烟圈',
   inhaling: '正在吸入，松手吐雾',
 };
+
+interface Pt {
+  x: number;
+  y: number;
+}
 
 Page({
   data: {
@@ -41,6 +47,7 @@ Page({
     nicotine: 0,
     titleName: getTitle(0),
     chargePercent: 0,
+    ringCount: 0,
     hintText: HINTS.idle,
     lightBtnText: '点 火',
     currentCigName: '',
@@ -70,6 +77,12 @@ Page({
   inhaleStart: 0,
   coughing: false,
   ashSlots: [] as BurnSlot[],
+  // 烟圈手势
+  ringPts: [] as Pt[],
+  ringCount: 0,
+  // 当前烟款粒子手感
+  puffSize: 1,
+  puffSpeed: 1,
 
   onLoad() {
     this.refreshFromGlobal();
@@ -88,8 +101,6 @@ Page({
         this.smoke.init(item.node, item.width || win.windowWidth, item.height || win.windowHeight);
         this.applySmokeStyle();
       });
-    // 烟灰炉燃烧进度定时刷新
-    this.ashTimer = setInterval(() => this.refreshAsh(), 15000) as unknown as number;
   },
 
   onShow() {
@@ -97,9 +108,16 @@ Page({
     this.refreshAsh();
     this.refreshQuit();
     this.applySmokeStyle();
+    if (!this.ashTimer) {
+      this.ashTimer = setInterval(() => this.refreshAsh(), 15000) as unknown as number;
+    }
   },
 
   onHide() {
+    if (this.ashTimer) {
+      clearInterval(this.ashTimer);
+      this.ashTimer = 0;
+    }
     this.persistAll();
   },
 
@@ -116,12 +134,14 @@ Page({
     persist(app.globalData);
   },
 
-  /** 把当前烟款配色 / 技能特效应用到粒子系统 */
+  /** 把当前烟款配色 / 手感 / 技能特效应用到粒子系统 */
   applySmokeStyle() {
-    if (!this.smoke) return;
     const g = app.globalData;
     const skills = getSkillState(g.cigaretteCount);
     const cig = getCig(g.currentCigarette);
+    this.puffSize = cig.puffSize;
+    this.puffSpeed = cig.puffSpeed;
+    if (!this.smoke) return;
     this.smoke.setColors(skills.neonBreath ? cig.colors.concat(['#a78bfa', '#22d3ee']) : cig.colors);
     this.smoke.setAmbient(skills.secondHand);
   },
@@ -179,7 +199,25 @@ Page({
     });
   },
 
+  /** 点火入口：戒烟挑战期间需要二次确认 */
   onLightUp() {
+    const g = app.globalData;
+    if (g.quitActive) {
+      wx.showModal({
+        title: '戒烟挑战中',
+        content: '点燃这支烟会判定挑战失败。确定要点燃吗？',
+        confirmText: '点燃',
+        cancelText: '再忍忍',
+        success: (res) => {
+          if (res.confirm) this.beginIgnite();
+        },
+      });
+      return;
+    }
+    this.beginIgnite();
+  },
+
+  beginIgnite() {
     if (this.data.phase !== 'idle') return;
     const g = app.globalData;
     const skills = getSkillState(g.cigaretteCount);
@@ -196,13 +234,60 @@ Page({
   onTouchStart() {
     if (this.data.phase !== 'lit') return;
     this.inhaleStart = Date.now();
-    this.setData({ phase: 'inhaling', hintText: HINTS.inhaling });
+    this.ringPts = [];
+    this.ringCount = 0;
+    this.setData({ phase: 'inhaling', hintText: HINTS.inhaling, ringCount: 0 });
     wx.vibrateShort({ type: 'light' });
     playSound('inhale', app.globalData.soundOn);
     this.chargeTimer = setInterval(() => {
       const percent = Math.min(100, Math.round(((Date.now() - this.inhaleStart) / MAX_CHARGE_MS) * 100));
       if (percent !== this.data.chargePercent) this.setData({ chargePercent: percent });
     }, 100) as unknown as number;
+  },
+
+  /** 吸入中画圈：识别完整圆周轨迹 → 烟圈连击（需烟圈大师） */
+  onTouchMove(e: WechatMiniprogram.TouchEvent) {
+    if (this.data.phase !== 'inhaling') return;
+    const skills = getSkillState(app.globalData.cigaretteCount);
+    if (!skills.smokeRing) return;
+    const t = e.touches && e.touches[0];
+    if (!t) return;
+    const pt: Pt = { x: t.clientX, y: t.clientY };
+    const pts = this.ringPts;
+    const last = pts[pts.length - 1];
+    if (last && Math.hypot(pt.x - last.x, pt.y - last.y) < 8) return;
+    pts.push(pt);
+    if (pts.length < 18) return;
+
+    let cx = 0;
+    let cy = 0;
+    for (const p of pts) {
+      cx += p.x;
+      cy += p.y;
+    }
+    cx /= pts.length;
+    cy /= pts.length;
+    let sum = 0;
+    let prev = Math.atan2(pts[0].y - cy, pts[0].x - cx);
+    let maxR = 0;
+    for (let i = 1; i < pts.length; i++) {
+      const a = Math.atan2(pts[i].y - cy, pts[i].x - cx);
+      let d = a - prev;
+      while (d > Math.PI) d -= 2 * Math.PI;
+      while (d < -Math.PI) d += 2 * Math.PI;
+      sum += d;
+      prev = a;
+      const rr = Math.hypot(pts[i].x - cx, pts[i].y - cy);
+      if (rr > maxR) maxR = rr;
+    }
+    if (Math.abs(sum) > (Math.PI * 5) / 3 && maxR > 20 && maxR < 220) {
+      this.ringCount += 1;
+      this.ringPts = [];
+      wx.vibrateShort({ type: 'light' });
+      this.setData({ ringCount: this.ringCount });
+    } else if (pts.length > 60) {
+      this.ringPts = pts.slice(-30);
+    }
   },
 
   onTouchEnd() {
@@ -212,6 +297,7 @@ Page({
       this.chargeTimer = 0;
     }
     const charge = Math.min(1, (Date.now() - this.inhaleStart) / MAX_CHARGE_MS);
+    const ringsDrawn = this.ringCount;
     playSound('exhale', app.globalData.soundOn);
 
     const g = app.globalData;
@@ -228,6 +314,7 @@ Page({
     const today = todayStr();
     const ns = nextStreak(g.lastSmokeDay, today, g.streakDays);
     g.streakDays = ns.streak;
+    if (g.streakDays > g.maxStreak) g.maxStreak = g.streakDays;
     g.lastSmokeDay = today;
 
     // —— 戒烟挑战：挑战期间抽烟即失败 ——
@@ -237,8 +324,10 @@ Page({
       quitFailed = true;
     }
 
-    // —— 收益结算 ——
-    const earn = Math.round(computeEarn(charge, cig.mult, skills) * ns.morningMult * coughFactor);
+    // —— 收益结算（烟圈连击加成）——
+    const earn = Math.round(
+      computeEarn(charge, cig.mult, skills) * ns.morningMult * coughFactor * ringFactor(ringsDrawn),
+    );
     g.nicotine += earn;
     g.cigaretteCount = before + 1;
     const after = g.cigaretteCount;
@@ -248,10 +337,18 @@ Page({
     g.burnSlots.push({ t: Date.now(), c: 0 });
     if (g.burnSlots.length > ASH.MAX_SLOTS) g.burnSlots.shift();
 
-    // —— 吐雾粒子 ——
+    // —— 吐雾粒子（烟圈数量 = 技能基础 3 圈 + 手绘圈数）——
     if (this.smoke) {
       const win = wx.getWindowInfo();
-      this.smoke.emitDrag(win.windowWidth * 0.5, win.windowHeight * 0.55, charge, skills.smokeRing);
+      const rings = skills.smokeRing ? 3 + ringsDrawn : 0;
+      this.smoke.emitDrag(
+        win.windowWidth * 0.5,
+        win.windowHeight * 0.55,
+        charge,
+        rings,
+        this.puffSize,
+        this.puffSpeed,
+      );
     }
 
     // —— 里程碑：技能解锁 / 称号晋升 ——
@@ -260,6 +357,7 @@ Page({
     const titleAfter = getTitle(after, g.soberAchieved);
     const messages: string[] = [];
     if (ns.morningMult > 1) messages.push(`晨烟×2，连击 ${g.streakDays} 天`);
+    if (ringsDrawn > 0) messages.push(`${ringsDrawn} 连烟圈 +${Math.round((ringFactor(ringsDrawn) - 1) * 100)}%`);
     for (const s of unlocked) messages.push(`解锁技能「${s.name}」`);
     if (titleAfter !== titleBefore) messages.push(`称号晋升「${titleAfter}」`);
     if (quitFailed) messages.push('戒烟挑战失败');
@@ -269,9 +367,12 @@ Page({
     this.refreshAsh();
     this.refreshFromGlobal();
     this.refreshQuit();
+    this.ringCount = 0;
+    this.ringPts = [];
     this.setData({
       phase: 'idle',
       chargePercent: 0,
+      ringCount: 0,
       hintText: `吐雾完成，尼古丁 +${earn}`,
       lightBtnText: '再点一支',
     });
@@ -326,7 +427,9 @@ Page({
       wx.showToast({ title: '烟灰还没攒够（2 烟灰 = 1 尼古丁）', icon: 'none' });
       return;
     }
+    const ashUsed = got * ASH.NIC_PER_ASH;
     g.nicotine += got;
+    g.ashCollected += ashUsed;
     g.burnSlots = r.slots;
     this.persistAll();
     playSound('reward', g.soundOn);
@@ -363,7 +466,15 @@ Page({
     if (g.soundOn) playSound('light', true);
   },
 
+  goGallery() {
+    wx.switchTab({ url: '/pages/gallery/gallery' });
+  },
+
+  goSkills() {
+    wx.switchTab({ url: '/pages/skills/skills' });
+  },
+
   noop() {
-    // 吞掉状态区触摸，避免误触 InhalE
+    // 吞掉状态区触摸，避免误触吸入
   },
 });

@@ -11,9 +11,11 @@
       <text class="gacha-butts">🚬 烟蒂 {{butts}}/{{cost}}</text>
     </view>
     <view class="gacha-odds">概率公示：{{oddsText}}</view>
-    <button class="gacha-btn {{butts >= cost ? '' : 'dim'}}" disabled="{{butts < cost}}" bindtap="onGacha">
-      合成抽奖 · {{cost}} 烟蒂/次
-    </button>
+    <button
+      class="gacha-btn {{butts >= cost && !gachaRolling ? '' : 'dim'}}"
+      disabled="{{butts < cost || gachaRolling}}"
+      bindtap="onGacha"
+    >{{gachaRolling ? '合成中…' : '合成抽奖 · ' + cost + ' 烟蒂/次'}}</button>
   </view>
 
   <view class="cig-list">

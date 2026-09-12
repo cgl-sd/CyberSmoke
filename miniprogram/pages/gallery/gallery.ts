@@ -23,6 +23,7 @@ Page({
     nicotine: 0,
     butts: 0,
     cost: GACHA.costButts,
+    gachaRolling: false,
     oddsText: GACHA.tiers
       .map((t) => `${Math.round(t.p * 100)}% ${t.name}(${t.min}-${t.max})`)
       .join(' · '),
@@ -81,24 +82,31 @@ Page({
     this.refresh();
   },
 
-  /** 烟蒂合成抽奖：10 烟蒂/次，概率已在页面公示 */
+  /** 烟蒂合成抽奖：10 烟蒂/次，概率已在页面公示；带开箱悬念 */
   onGacha() {
     const g = app.globalData;
+    if (this.data.gachaRolling) return;
     if (g.butts < GACHA.costButts) {
       wx.showToast({ title: `烟蒂不足（需要 ${GACHA.costButts}）`, icon: 'none' });
       return;
     }
-    g.butts -= GACHA.costButts;
-    const result = rollGacha(Math.random(), Math.random());
-    g.nicotine += result.amount;
-    persist(g);
-    playSound('reward', g.soundOn);
-    wx.vibrateShort({ type: 'medium' });
-    wx.showToast({
-      title: `抽中「${result.tier.name}」+${result.amount} 尼古丁`,
-      icon: 'none',
-      duration: 2200,
-    });
-    this.refresh();
+    this.setData({ gachaRolling: true });
+    // 悬念停顿后开箱
+    setTimeout(() => {
+      g.butts -= GACHA.costButts;
+      g.gachaCount += 1;
+      const result = rollGacha(Math.random(), Math.random());
+      g.nicotine += result.amount;
+      persist(g);
+      playSound('reward', g.soundOn);
+      wx.vibrateShort({ type: 'medium' });
+      this.setData({ gachaRolling: false });
+      wx.showToast({
+        title: `抽中「${result.tier.name}」+${result.amount} 尼古丁`,
+        icon: 'none',
+        duration: 2200,
+      });
+      this.refresh();
+    }, 700) as unknown as number;
   },
 });

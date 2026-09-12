@@ -29,6 +29,10 @@ export interface CigDef {
   desc: string;
   /** 粒子配色 */
   colors: string[];
+  /** 粒子尺寸因子（>1 更浓大） */
+  puffSize: number;
+  /** 粒子速度因子（<1 更缓慢） */
+  puffSpeed: number;
 }
 
 export interface SkillState {
@@ -66,6 +70,8 @@ export const CIGARETTES: CigDef[] = [
     mult: 1,
     desc: '默认烟款。青色数据流粒子，吞吐顺滑',
     colors: ['#00ffd5', '#38bdf8', '#7dd3fc'],
+    puffSize: 1,
+    puffSpeed: 1,
   },
   {
     id: 'cigar',
@@ -74,6 +80,8 @@ export const CIGARETTES: CigDef[] = [
     mult: 1.5,
     desc: '浓烈缓慢的洋红烟雾，收益 ×1.5',
     colors: ['#ff2e88', '#c084fc', '#f472b6'],
+    puffSize: 1.35,
+    puffSpeed: 0.65,
   },
   {
     id: 'vape',
@@ -82,6 +90,8 @@ export const CIGARETTES: CigDef[] = [
     mult: 2,
     desc: '全彩霓虹雾化，收益 ×2',
     colors: ['#00ffd5', '#ff2e88', '#a78bfa', '#38bdf8'],
+    puffSize: 0.8,
+    puffSpeed: 1.5,
   },
 ];
 
@@ -122,6 +132,14 @@ export function computeEarn(charge: number, cigMult: number, skills: SkillState)
 /** 按 id 取烟款，未知道具回退默认款 */
 export function getCig(id: string): CigDef {
   return CIGARETTES.find((c) => c.id === id) || CIGARETTES[0];
+}
+
+/**
+ * 烟圈连击加成：吸入时每画一个完整烟圈 +10%，封顶 +50%
+ */
+export function ringFactor(ringCount: number): number {
+  const n = Math.max(0, ringCount);
+  return 1 + Math.min(0.5, n * 0.1);
 }
 
 // ============ 焦油系统 ============

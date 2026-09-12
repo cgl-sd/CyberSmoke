@@ -28,7 +28,8 @@
       "outputPath": ""
     },
     "useCompilerPlugins": ["typescript"],
-    "ignoreUploadUnusedFiles": true
+    "ignoreUploadUnusedFiles": true,
+    "lazyCodeLoading": "requiredComponents"
   },
   "editorSetting": {
     "tabIndent": "insertSpaces",

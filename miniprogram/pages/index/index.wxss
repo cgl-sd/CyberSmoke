@@ -333,6 +333,11 @@
   font-size: 20rpx;
 }
 
+.ring-label {
+  color: #c084fc;
+  font-weight: 700;
+}
+
 .dock {
   padding: 0 40rpx 40rpx;
   display: flex;

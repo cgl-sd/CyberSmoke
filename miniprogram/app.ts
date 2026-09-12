@@ -16,6 +16,9 @@ App<IAppOption>({
     quitStartDay: '',
     soberAchieved: false,
     soundOn: true,
+    maxStreak: 0,
+    gachaCount: 0,
+    ashCollected: 0,
   },
 
   onLaunch() {
@@ -34,6 +37,9 @@ App<IAppOption>({
       this.globalData.quitStartDay = saved.quitStartDay;
       this.globalData.soberAchieved = saved.soberAchieved;
       this.globalData.soundOn = saved.soundOn;
+      this.globalData.maxStreak = saved.maxStreak;
+      this.globalData.gachaCount = saved.gachaCount;
+      this.globalData.ashCollected = saved.ashCollected;
     }
     // 保证烟款状态合法
     if (this.globalData.ownedCigarettes.indexOf('slim') < 0) {
