@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 
+### Changed
+
+- `project.config.json` 的 appid 从 `touristappid` 改为开发者工具申请的本地测试号 `wx15f3379c42b9e3e0`（CLI 命令行调用因此可用）
+
 ## [0.1.0] - 2026-09-12
 
 ### Added
