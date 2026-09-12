@@ -1,0 +1,17 @@
+# 依赖
+node_modules/
+
+# TypeScript 编译产物（由微信开发者工具自动生成，不入库）
+miniprogram/**/*.js
+*.js.map
+
+# 测试与临时产物（约定：测试内容统一放 tmp/，不入库）
+tmp/*
+!tmp/.gitkeep
+
+# 微信开发者工具个人配置
+project.private.config.json
+
+# 系统文件
+.DS_Store
+*.log

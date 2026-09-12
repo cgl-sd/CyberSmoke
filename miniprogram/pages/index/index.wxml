@@ -1,0 +1,19 @@
+<view class="container">
+  <view class="title">CYBER</view>
+  <view class="title neon">SMOKE</view>
+  <view class="subtitle">赛博吸烟 · 纯属虚拟 · 不提倡吸烟</view>
+
+  <view class="stats">
+    <view class="stat">
+      <text class="num">{{cigaretteCount}}</text>
+      <text class="label">已抽支数</text>
+    </view>
+    <view class="stat">
+      <text class="num">{{nicotine}}</text>
+      <text class="label">尼古丁</text>
+    </view>
+  </view>
+
+  <button class="light-btn" bindtap="onLightUp">点 火</button>
+  <view class="tip">MVP 脚手架 · 抽烟交互开发中</view>
+</view>

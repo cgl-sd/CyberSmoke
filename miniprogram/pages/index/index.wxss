@@ -1,0 +1,77 @@
+/* 首页样式 —— 赛博朋克暗色风 */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 140rpx;
+  min-height: 100vh;
+}
+
+.title {
+  font-size: 76rpx;
+  font-weight: 700;
+  letter-spacing: 14rpx;
+  color: #e8e8f0;
+  line-height: 1.2;
+}
+
+.title.neon {
+  color: #00ffd5;
+  text-shadow: 0 0 16rpx rgba(0, 255, 213, 0.8);
+}
+
+.subtitle {
+  margin-top: 24rpx;
+  color: #8a8aa0;
+  font-size: 24rpx;
+  letter-spacing: 4rpx;
+}
+
+.stats {
+  display: flex;
+  gap: 140rpx;
+  margin-top: 100rpx;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat .num {
+  font-size: 56rpx;
+  color: #ff2e88;
+  font-weight: 700;
+}
+
+.stat .label {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: #8a8aa0;
+}
+
+.light-btn {
+  margin-top: 140rpx;
+  width: 320rpx;
+  height: 320rpx;
+  border-radius: 50%;
+  line-height: 320rpx;
+  font-size: 40rpx;
+  font-weight: 700;
+  letter-spacing: 8rpx;
+  color: #0a0a12;
+  background: #00ffd5;
+  border: none;
+  box-shadow: 0 0 48rpx rgba(0, 255, 213, 0.6);
+}
+
+.light-btn::after {
+  border: none;
+}
+
+.tip {
+  margin-top: 72rpx;
+  color: #55556a;
+  font-size: 22rpx;
+}

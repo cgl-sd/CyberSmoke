@@ -1,0 +1,13 @@
+{
+  "name": "cybersmoke",
+  "version": "0.1.0",
+  "private": true,
+  "description": "CyberSmoke 赛博吸烟 —— 虚拟吸烟互动体验微信小程序",
+  "scripts": {
+    "lint:ts": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "miniprogram-api-typings": "^4.0.5",
+    "typescript": "^5.5.4"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "compileType": "miniprogram",
+  "appid": "touristappid",
+  "projectname": "CyberSmoke",
+  "description": "赛博吸烟——虚拟吸烟互动体验小程序（纯属虚拟，不提倡吸烟）",
+  "miniprogramRoot": "miniprogram/",
+  "srcMiniprogramRoot": "miniprogram/",
+  "setting": {
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "minified": true,
+    "urlCheck": false,
+    "coverView": true,
+    "autoAudits": false,
+    "checkInvalidKey": true,
+    "checkSiteMap": false,
+    "uploadWithSourceMap": true,
+    "compileHotReLoad": false,
+    "uglifyFileName": false,
+    "minifyWXSS": true,
+    "minifyWXML": true,
+    "packNpmManually": false,
+    "packNpmRelationList": [],
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    },
+    "useCompilerPlugins": ["typescript"],
+    "ignoreUploadUnusedFiles": true
+  },
+  "editorSetting": {
+    "tabIndent": "insertSpaces",
+    "tabSize": 2
+  }
+}
