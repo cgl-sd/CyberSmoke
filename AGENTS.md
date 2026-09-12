@@ -30,7 +30,7 @@
 - 调试以微信开发者工具为准：模拟器 + Console；需要真机验证时用预览/真机调试。
 - 本地开发不校验合法域名（`urlCheck: false`），正式发布前接口域名必须 HTTPS 且在后台配置白名单。
 - 音效与 tabBar 图标由 `scripts/gen-*.mjs` 生成，调整素材后重跑脚本，不要手改二进制文件。
-- 自动化测试在 `tmp/` 下：`e2e-smoke.mjs`（端到端）、`unit-balance.mjs`（数值）、`console-probe.mjs`（报错监听）。
+- 自动化测试在 `tmp/` 下：`unit-v1.mjs`（评分/关卡/经验等纯函数）、`e2e-ring.mjs`（端到端验收）。注意：automator 的合成 touchmove 不会投递到页面，触摸输入用 `callMethod` 调页面真实处理器。
 
 ## 合规红线
 
