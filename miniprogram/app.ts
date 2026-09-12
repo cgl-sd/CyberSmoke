@@ -7,6 +7,15 @@ App<IAppOption>({
     cigaretteCount: 0,
     ownedCigarettes: ['slim'],
     currentCigarette: 'slim',
+    tar: 0,
+    butts: 0,
+    burnSlots: [],
+    lastSmokeDay: '',
+    streakDays: 0,
+    quitActive: false,
+    quitStartDay: '',
+    soberAchieved: false,
+    soundOn: true,
   },
 
   onLaunch() {
@@ -16,6 +25,15 @@ App<IAppOption>({
       this.globalData.cigaretteCount = saved.cigaretteCount;
       this.globalData.ownedCigarettes = saved.ownedCigarettes;
       this.globalData.currentCigarette = saved.currentCigarette;
+      this.globalData.tar = saved.tar;
+      this.globalData.butts = saved.butts;
+      this.globalData.burnSlots = saved.burnSlots;
+      this.globalData.lastSmokeDay = saved.lastSmokeDay;
+      this.globalData.streakDays = saved.streakDays;
+      this.globalData.quitActive = saved.quitActive;
+      this.globalData.quitStartDay = saved.quitStartDay;
+      this.globalData.soberAchieved = saved.soberAchieved;
+      this.globalData.soundOn = saved.soundOn;
     }
     // 保证烟款状态合法
     if (this.globalData.ownedCigarettes.indexOf('slim') < 0) {

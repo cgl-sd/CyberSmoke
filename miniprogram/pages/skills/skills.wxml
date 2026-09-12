@@ -1,7 +1,7 @@
 <view class="page">
   <view class="head">
     <view class="head-title">技能矩阵</view>
-    <view class="head-sub">当前称号：{{titleName}} · 已抽 {{count}} 支</view>
+    <view class="head-sub">当前称号：{{titleName}} · 已抽 {{count}} 支 · 晨烟连击 {{streakDays}} 天</view>
   </view>
 
   <view class="skill-list">

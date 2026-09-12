@@ -4,6 +4,18 @@
     <view class="head-sub">尼古丁余额：{{nicotine}}</view>
   </view>
 
+  <!-- 烟蒂合成所（概率公示） -->
+  <view class="gacha-card">
+    <view class="gacha-head">
+      <text class="gacha-title">烟蒂合成所</text>
+      <text class="gacha-butts">🚬 烟蒂 {{butts}}/{{cost}}</text>
+    </view>
+    <view class="gacha-odds">概率公示：{{oddsText}}</view>
+    <button class="gacha-btn {{butts >= cost ? '' : 'dim'}}" disabled="{{butts < cost}}" bindtap="onGacha">
+      合成抽奖 · {{cost}} 烟蒂/次
+    </button>
+  </view>
+
   <view class="cig-list">
     <view
       class="cig-card {{item.equipped ? 'equipped' : ''}}"
@@ -27,5 +39,5 @@
     </view>
   </view>
 
-  <view class="foot">抽烟积累尼古丁，解锁更酷的烟款与粒子特效</view>
+  <view class="foot">抽烟积累尼古丁与烟蒂，解锁更酷的烟款与粒子特效</view>
 </view>

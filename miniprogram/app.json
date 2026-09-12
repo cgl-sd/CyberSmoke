@@ -14,15 +14,21 @@
     "list": [
       {
         "pagePath": "pages/index/index",
-        "text": "抽烟"
+        "text": "抽烟",
+        "iconPath": "assets/icon/tab-smoke.png",
+        "selectedIconPath": "assets/icon/tab-smoke-active.png"
       },
       {
         "pagePath": "pages/skills/skills",
-        "text": "技能"
+        "text": "技能",
+        "iconPath": "assets/icon/tab-skills.png",
+        "selectedIconPath": "assets/icon/tab-skills-active.png"
       },
       {
         "pagePath": "pages/gallery/gallery",
-        "text": "图鉴"
+        "text": "图鉴",
+        "iconPath": "assets/icon/tab-gallery.png",
+        "selectedIconPath": "assets/icon/tab-gallery-active.png"
       }
     ]
   },

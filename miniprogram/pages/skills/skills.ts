@@ -18,13 +18,16 @@ Page({
     list: [] as SkillRow[],
     titleName: '',
     count: 0,
+    streakDays: 0,
   },
 
   onShow() {
-    const count = app.globalData.cigaretteCount;
+    const g = app.globalData;
+    const count = g.cigaretteCount;
     this.setData({
-      titleName: getTitle(count),
+      titleName: getTitle(count, g.soberAchieved),
       count,
+      streakDays: g.streakDays,
       list: SKILLS.map((s) => ({
         id: s.id,
         name: s.name,

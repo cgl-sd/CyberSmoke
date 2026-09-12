@@ -1,6 +1,7 @@
-// pages/gallery/gallery.ts —— 烟款图鉴：购买与装备
-import { CIGARETTES, getCig } from '../../data/game';
+// pages/gallery/gallery.ts —— 烟款图鉴：购买、装备 + 烟蒂合成抽奖
+import { GACHA, CIGARETTES, getCig, rollGacha } from '../../data/game';
 import { persist } from '../../utils/save';
+import { playSound } from '../../utils/sound';
 
 const app = getApp<IAppOption>();
 
@@ -20,6 +21,11 @@ Page({
   data: {
     list: [] as CigRow[],
     nicotine: 0,
+    butts: 0,
+    cost: GACHA.costButts,
+    oddsText: GACHA.tiers
+      .map((t) => `${Math.round(t.p * 100)}% ${t.name}(${t.min}-${t.max})`)
+      .join(' · '),
   },
 
   onShow() {
@@ -30,6 +36,7 @@ Page({
     const g = app.globalData;
     this.setData({
       nicotine: g.nicotine,
+      butts: g.butts,
       list: CIGARETTES.map((c) => ({
         id: c.id,
         name: c.name,
@@ -69,7 +76,29 @@ Page({
     g.ownedCigarettes.push(id);
     g.currentCigarette = id;
     persist(g);
+    playSound('reward', g.soundOn);
     wx.showToast({ title: `已购买并装备「${cig.name}」`, icon: 'none' });
+    this.refresh();
+  },
+
+  /** 烟蒂合成抽奖：10 烟蒂/次，概率已在页面公示 */
+  onGacha() {
+    const g = app.globalData;
+    if (g.butts < GACHA.costButts) {
+      wx.showToast({ title: `烟蒂不足（需要 ${GACHA.costButts}）`, icon: 'none' });
+      return;
+    }
+    g.butts -= GACHA.costButts;
+    const result = rollGacha(Math.random(), Math.random());
+    g.nicotine += result.amount;
+    persist(g);
+    playSound('reward', g.soundOn);
+    wx.vibrateShort({ type: 'medium' });
+    wx.showToast({
+      title: `抽中「${result.tier.name}」+${result.amount} 尼古丁`,
+      icon: 'none',
+      duration: 2200,
+    });
     this.refresh();
   },
 });

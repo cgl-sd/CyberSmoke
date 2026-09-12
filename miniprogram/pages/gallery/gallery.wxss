@@ -19,6 +19,56 @@
   color: #8a8aa0;
 }
 
+/* 烟蒂合成所 */
+.gacha-card {
+  margin-top: 32rpx;
+  background: rgba(192, 132, 252, 0.06);
+  border: 1rpx solid rgba(192, 132, 252, 0.4);
+  border-radius: 20rpx;
+  padding: 28rpx;
+}
+
+.gacha-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.gacha-title {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #c084fc;
+}
+
+.gacha-butts {
+  font-size: 22rpx;
+  color: #8a8aa0;
+}
+
+.gacha-odds {
+  margin-top: 14rpx;
+  font-size: 20rpx;
+  color: #8a8aa0;
+  line-height: 1.6;
+}
+
+.gacha-btn {
+  margin-top: 20rpx;
+  height: 76rpx;
+  line-height: 76rpx;
+  border-radius: 38rpx;
+  background: #c084fc;
+  color: #0a0a12;
+  font-size: 26rpx;
+  font-weight: 700;
+  border: none;
+  padding: 0;
+}
+
+.gacha-btn::after {
+  border: none;
+}
+
 .cig-list {
   margin-top: 40rpx;
   display: flex;
